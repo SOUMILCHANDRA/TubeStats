@@ -273,16 +273,28 @@ selected_tz = st.sidebar.selectbox("Your Timezone", COMMON_TIMEZONES, index=0)
 # Listening Time Method
 time_method = st.sidebar.radio(
     "Listening Time Method",
-    options=["Gap-based Estimate", "YouTube Data API v3 Lookup"],
+    options=[
+        "ytmusicapi Auto-Lookup (Free, No Key Required)",
+        "Gap-based Estimate (Instant & Offline)",
+        "YouTube Data API v3 (Google Cloud Key)"
+    ],
     index=0,
-    help="Method 1 estimates track duration from gaps between consecutive plays. Method 2 fetches official durations using an API key."
+    help="ytmusicapi fetches exact track durations directly from YouTube Music with local SQLite caching. Gap-based estimate uses intervals between plays."
 )
 
 api_key = None
 gap_cap = 6.0
 default_track = 3.5
 
-if time_method == "Gap-based Estimate":
+if time_method.startswith("ytmusicapi"):
+    duration_method_choice = "ytmusicapi"
+    st.sidebar.caption("⚡ Direct unauthenticated YouTube Music lookup with local SQLite caching (`ytmusic_duration_cache.db`).")
+elif time_method.startswith("YouTube Data API"):
+    duration_method_choice = "api_lookup"
+    api_key = st.sidebar.text_input("YouTube Data API Key", type="password", help="Free API key from Google Cloud Console.")
+    st.sidebar.info("Durations are cached locally in SQLite. Missing or quota-limited tracks fall back to gap estimate.")
+else:
+    duration_method_choice = "gap"
     col_g1, col_g2 = st.sidebar.columns(2)
     with col_g1:
         gap_cap = st.number_input("Max Gap (min)", min_value=1.0, max_value=30.0, value=6.0, step=0.5,
@@ -290,9 +302,6 @@ if time_method == "Gap-based Estimate":
     with col_g2:
         default_track = st.number_input("Default Track (min)", min_value=1.0, max_value=10.0, value=3.5, step=0.5,
                                         help="Duration assigned when gap exceeds cap or track is last in a session.")
-else:
-    api_key = st.sidebar.text_input("YouTube Data API Key", type="password", help="Free API key from Google Cloud Console.")
-    st.sidebar.info("Durations are cached locally in SQLite. Missing or quota-limited tracks fall back to gap estimate.")
 
 # Session detection
 session_gap = st.sidebar.slider(
@@ -311,6 +320,26 @@ include_regular_yt = st.sidebar.toggle(
     help="When enabled, videos watched on regular YouTube (header != 'YouTube Music') are also included."
 )
 
+# Optional ytmusicapi Direct Account Sync
+with st.sidebar.expander("🔗 Direct YT Music Account Sync", expanded=False):
+    st.caption("Sync history directly from your account via `ytmusicapi` without waiting for Google Takeout.")
+    auth_file = st.file_uploader("Upload browser.json or oauth.json", type=["json"], key="auth_json",
+                                 help="Exported using ytmusicapi.setup(filepath='browser.json') or ytmusicapi.setup_oauth()")
+    if auth_file:
+        if st.button("Fetch Live Account History", use_container_width=True):
+            try:
+                from ytmusicapi import YTMusic
+                auth_data = json.loads(auth_file.getvalue().decode("utf-8"))
+                yt_auth = YTMusic(auth=auth_data)
+                account_history = yt_auth.get_history()
+                converted_records = cleaner.convert_ytmusicapi_history_to_records(account_history)
+                st.session_state["ytmusicapi_live_history"] = json.dumps(converted_records).encode("utf-8")
+                st.success(f"Fetched {len(converted_records)} tracks from your account!")
+                st.rerun()
+            except Exception as e:
+                st.error(f"Failed to fetch account history: {e}")
+
+
 st.sidebar.markdown("---")
 st.sidebar.caption("🔒 All processing runs locally on your computer. No data is sent to external servers.")
 
@@ -321,10 +350,13 @@ st.sidebar.caption("🔒 All processing runs locally on your computer. No data i
 
 file_bytes_to_load = []
 
+if "ytmusicapi_live_history" in st.session_state:
+    file_bytes_to_load.append(st.session_state["ytmusicapi_live_history"])
+
 if uploaded_files:
     for f in uploaded_files:
         file_bytes_to_load.append(f.getvalue())
-elif use_demo:
+elif use_demo and not file_bytes_to_load:
     demo_path = Path("sample_watch_history.json")
     if not demo_path.exists():
         import generate_sample_data
@@ -342,6 +374,7 @@ if not file_bytes_to_load:
        - Deselect all, then check only **YouTube and YouTube Music**
        - Click **'Multiple formats'** and ensure History is set to **JSON**
        - Download and extract the archive, then upload `watch-history.json` here.
+    3. Or connect your YouTube Music account via **ytmusicapi** in the sidebar to sync your live history directly!
     """)
     st.stop()
     clean_df = pd.DataFrame()
@@ -352,12 +385,13 @@ else:
             file_bytes_list=file_bytes_to_load,
             include_regular_youtube=include_regular_yt,
             target_timezone=selected_tz,
-            duration_method="api_lookup" if time_method.startswith("YouTube") else "gap",
+            duration_method=duration_method_choice,
             gap_cap_minutes=gap_cap,
             default_track_minutes=default_track,
             session_gap_minutes=session_gap,
             yt_api_key=api_key
         )
+
 
 if clean_df.empty or "year" not in clean_df.columns:
     if file_bytes_to_load:
@@ -404,7 +438,12 @@ with st.expander("📊 Data Quality & Ingestion Summary", expanded=False):
     col_sub1, col_sub2, col_sub3 = st.columns(3)
     col_sub1.info(f"❓ **Unknown Artists**: {clean_report.unknown_artists_flagged} deleted/private items flagged")
     col_sub2.info(f"🔗 **URL-only Titles**: {clean_report.url_titles_flagged} removed tracks recovered")
-    duration_label = "API Verified Durations" if clean_report.duration_method_used == "api_lookup" else f"Gap-based Estimate (Cap: {gap_cap}m, Default: {default_track}m)"
+    if clean_report.duration_method_used == "ytmusicapi":
+        duration_label = f"ytmusicapi Verified Durations ({clean_report.cached_api_durations_used} tracks synced)"
+    elif clean_report.duration_method_used == "api_lookup":
+        duration_label = f"YouTube Data API v3 Verified ({clean_report.cached_api_durations_used} tracks)"
+    else:
+        duration_label = f"Gap-based Estimate (Cap: {gap_cap}m, Default: {default_track}m)"
     col_sub3.info(f"⏱️ **Duration Engine**: {duration_label}")
 
 

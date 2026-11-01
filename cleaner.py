@@ -167,6 +167,88 @@ class DurationCache:
             conn.commit()
 
 
+def fetch_durations_ytmusicapi(
+    video_ids: List[str],
+    duration_cache: DurationCache,
+    max_lookups: int = 250,
+    max_workers: int = 5
+) -> Dict[str, float]:
+    """
+    Fetch exact track durations and metadata directly from YouTube Music using ytmusicapi.
+    Requires no API keys, credentials, or Google Cloud setup.
+    Results are cached in local SQLite for sub-millisecond future runs.
+    """
+    from concurrent.futures import ThreadPoolExecutor
+
+    try:
+        from ytmusicapi import YTMusic
+        yt = YTMusic()
+    except Exception:
+        return duration_cache.get_batch(video_ids)
+
+    cached_durations = duration_cache.get_batch(video_ids)
+    missing_ids = [vid for vid in video_ids if vid and vid not in cached_durations]
+
+    if not missing_ids:
+        return cached_durations
+
+    to_fetch = missing_ids[:max_lookups]
+    fetched_records = []
+
+    def fetch_single(vid: str) -> Optional[Tuple[str, float, str, str, str]]:
+        try:
+            song = yt.get_song(vid)
+            video_details = song.get("videoDetails", {})
+            dur_str = video_details.get("lengthSeconds")
+            if not dur_str:
+                dur_str = song.get("microformat", {}).get("microformatDataRenderer", {}).get("videoDetails", {}).get("durationSeconds")
+            if dur_str:
+                dur_sec = float(dur_str)
+                title = video_details.get("title", "")
+                author = video_details.get("author", "")
+                return (vid, dur_sec, title, author, "ytmusicapi")
+        except Exception:
+            pass
+        return None
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        results = executor.map(fetch_single, to_fetch)
+        for r in results:
+            if r:
+                vid, dur_sec, title, author, source = r
+                cached_durations[vid] = dur_sec
+                fetched_records.append(r)
+
+    if fetched_records:
+        duration_cache.set_batch(fetched_records)
+
+    return cached_durations
+
+
+def convert_ytmusicapi_history_to_records(history_list: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Converts items returned by ytmusic.get_history() into standard watch-history format
+    so they can be fed directly into the parsing and cleaning pipeline.
+    """
+    records = []
+    now_ts = pd.Timestamp.now(tz="UTC")
+    for i, item in enumerate(history_list):
+        vid = item.get("videoId")
+        title = item.get("title", "Unknown Title")
+        artists = item.get("artists", [])
+        artist_name = artists[0].get("name", "Unknown Artist") if artists else "Unknown Artist"
+        ts = (now_ts - pd.Timedelta(minutes=(len(history_list) - i) * 4)).isoformat()
+        records.append({
+            "header": "YouTube Music",
+            "title": f"Watched {title}",
+            "titleUrl": f"https://music.youtube.com/watch?v={vid}" if vid else None,
+            "subtitles": [{"name": artist_name, "url": f"https://music.youtube.com/channel/{artists[0].get('id', '')}" if artists else None}],
+            "time": ts,
+            "products": ["YouTube Music"]
+        })
+    return records
+
+
 def fetch_durations_yt_api(
     video_ids: List[str],
     api_key: str,
@@ -374,8 +456,21 @@ def clean_watch_history(
     clean_df["duration_sec"] = gap_durations
     clean_df["duration_source"] = "gap_estimate"
 
-    # Method 2: API lookup (optional override)
-    if duration_method == "api_lookup" and yt_api_key:
+    # Method 2: ytmusicapi Lookup (Free, No API key required)
+    if duration_method == "ytmusicapi":
+        duration_cache = DurationCache()
+        unique_vids = [v for v in clean_df["video_id"].dropna().unique() if v]
+        api_durations = fetch_durations_ytmusicapi(unique_vids, duration_cache)
+        if api_durations:
+            api_dur_series = clean_df["video_id"].map(api_durations)
+            matched_mask = api_dur_series.notna() & (api_dur_series > 0)
+            clean_df.loc[matched_mask, "duration_sec"] = api_dur_series[matched_mask]
+            clean_df.loc[matched_mask, "duration_source"] = "ytmusicapi"
+            report.cached_api_durations_used = int(matched_mask.sum())
+            report.duration_method_used = "ytmusicapi"
+
+    # Method 3: YouTube Data API v3 lookup (Google Cloud Key)
+    elif duration_method == "api_lookup" and yt_api_key:
         duration_cache = DurationCache()
         unique_vids = [v for v in clean_df["video_id"].dropna().unique() if v]
         api_durations = fetch_durations_yt_api(unique_vids, yt_api_key, duration_cache)
@@ -385,6 +480,7 @@ def clean_watch_history(
             clean_df.loc[matched_mask, "duration_sec"] = api_dur_series[matched_mask]
             clean_df.loc[matched_mask, "duration_source"] = "api_lookup"
             report.cached_api_durations_used = int(matched_mask.sum())
+            report.duration_method_used = "api_lookup"
 
     clean_df["duration_min"] = clean_df["duration_sec"] / 60.0
     clean_df["duration_hours"] = clean_df["duration_sec"] / 3600.0

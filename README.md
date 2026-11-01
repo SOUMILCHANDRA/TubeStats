@@ -51,9 +51,11 @@ streamlit run app.py --server.port=$PORT --server.address=0.0.0.0 --server.headl
    - Parses UTC timestamps and converts everything to your chosen timezone (default: `Asia/Kolkata`).
    - Deduplicates identical plays and sorts ascending chronologically.
 
-2. **Listening Time Estimation & API Lookup**:
-   - **Method 1 (Gap-based estimate)**: Duration of play = gap to next play, capped at e.g. 6 minutes. Pauses longer than the cap transition to a configurable default track length (default: 3.5 min). Clearly labeled as *estimated*.
-   - **Method 2 (API Lookup)**: Optional YouTube Data API v3 integration with local SQLite caching (`ytmusic_duration_cache.db`) and batching (50 IDs per call).
+2. **Listening Time Estimation & ytmusicapi Integration**:
+   - **Method 1 (ytmusicapi Auto-Lookup)**: Integrated with [ytmusicapi](https://ytmusicapi.readthedocs.io/) to automatically fetch official track durations and metadata directly from YouTube Music **without requiring any API key or Google Cloud account**. Cached locally in SQLite (`ytmusic_duration_cache.db`) with multi-threaded concurrent fetching.
+   - **Method 2 (Gap-based estimate)**: Duration of play = gap to next play, capped at e.g. 6 minutes. Pauses longer than the cap transition to a configurable default track length (default: 3.5 min). Fast, offline, and instant.
+   - **Method 3 (YouTube Data API v3)**: Optional Google Cloud API Key lookup with batching.
+   - **Direct Account Sync**: Connect your YouTube Music account via `ytmusicapi` using `browser.json` or `oauth.json` to stream live listening history directly into the dashboard without waiting for Google Takeout export archives!
 
 3. **Session Intelligence**:
    - Groups continuous listening runs separated by under N minutes (default: 30 min) into distinct sessions.

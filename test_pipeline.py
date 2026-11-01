@@ -178,3 +178,27 @@ def test_metrics_calculations(sample_raw_records):
     # Streaks
     streaks = metrics.compute_listening_streaks(clean_df)
     assert streaks["longest_streak_days"] == 1
+
+
+def test_ytmusicapi_history_conversion():
+    from cleaner import convert_ytmusicapi_history_to_records
+    sample_history = [
+        {
+            "videoId": "a5uQMwRMHcs",
+            "title": "Instant Crush",
+            "artists": [{"name": "Daft Punk", "id": "UC123"}],
+            "duration": "5:39"
+        },
+        {
+            "videoId": "4NRXx6U8ABQ",
+            "title": "Blinding Lights",
+            "artists": [{"name": "The Weeknd", "id": "UC456"}],
+            "duration": "3:20"
+        }
+    ]
+    records = convert_ytmusicapi_history_to_records(sample_history)
+    assert len(records) == 2
+    assert records[0]["title"] == "Watched Instant Crush"
+    assert records[0]["subtitles"][0]["name"] == "Daft Punk"
+    assert "https://music.youtube.com/watch?v=a5uQMwRMHcs" in records[0]["titleUrl"]
+
