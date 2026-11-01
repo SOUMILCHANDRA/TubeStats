@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caches and virtual environments
+.pytest_cache/
+.cache/
+.venv/
+venv/
+ENV/
+env/
+
+# SQLite databases & caches
+*.db
+*.sqlite3
+
+# Personal Google Takeout data files (keep demo sample data)
+watch-history.json
+watch-history*.json
+!sample_watch_history.json
+
+# Streamlit config / cache
+.streamlit/secrets.toml
+
+# OS artifacts
+.DS_Store
+Thumbs.db
