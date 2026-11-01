@@ -289,7 +289,10 @@ def clean_watch_history(
 
     # 4. Parse timestamp as UTC, convert to local timezone
     # Takeout timestamps look like '2024-03-15T18:42:11.123Z'
-    clean_df["time_utc"] = pd.to_datetime(clean_df["time"], utc=True, errors="coerce")
+    try:
+        clean_df["time_utc"] = pd.to_datetime(clean_df["time"], format="ISO8601", utc=True)
+    except Exception:
+        clean_df["time_utc"] = pd.to_datetime(clean_df["time"], utc=True, errors="coerce")
     clean_df = clean_df.dropna(subset=["time_utc"]).copy()
 
     # Sort ascending chronologically (Google Takeout is newest-first)

@@ -1,91 +1,2238 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>YT Music Wrapped Pro — TubeStats</title>
-    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/6/6a/Youtube_Music_icon.svg" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stlite/browser/build/stlite.css" />
-    <style>
-      body, html {
-        margin: 0;
-        padding: 0;
-        background-color: #0E1117;
-        color: #F0F6FC;
-        height: 100%;
-        overflow: hidden;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YT Music Telemetry — Luxury Editorial Intelligence</title>
+  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/6/6a/Youtube_Music_icon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    /* ==========================================================================
+       FERRARI DESIGN SYSTEM - TOKENS & ATOMS
+       Base Canvas: #181818 | Primary Voltage: Rosso Corsa #da291c
+       Corners: 0px Sharp Precision | Explicit 8px Spacing Ladder
+       ========================================================================== */
+    :root {
+      --color-primary: #da291c;
+      --color-primary-active: #b01e0a;
+      --color-primary-hover: #9d2211;
+      --color-ink: #ffffff;
+      --color-body: #969696;
+      --color-body-strong: #ffffff;
+      --color-muted: #666666;
+      --color-muted-soft: #8f8f8f;
+      --color-hairline: #303030;
+      --color-canvas: #181818;
+      --color-canvas-elevated: #202020;
+      --color-surface-card: #202020;
+      --color-surface-soft: #262626;
+
+      --font-family: 'FerrariSans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --radius-none: 0px;
+      --radius-sm: 4px;
+      --radius-full: 9999px;
+
+      --space-xxxs: 4px;
+      --space-xxs: 8px;
+      --space-xs: 16px;
+      --space-sm: 24px;
+      --space-md: 32px;
+      --space-lg: 48px;
+      --space-xl: 64px;
+      --space-xxl: 96px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--color-canvas);
+      color: var(--color-ink);
+      font-family: var(--font-family);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* Top Racing Livery Band */
+    .livery-header-band {
+      height: 4px;
+      background: var(--color-primary);
+      width: 100%;
+    }
+
+    /* Navigation */
+    .top-nav {
+      background: var(--color-canvas);
+      border-bottom: 1px solid var(--color-hairline);
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-md);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--color-ink);
+      text-decoration: none;
+    }
+    .brand-badge {
+      background: var(--color-primary);
+      color: var(--color-ink);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      border-radius: var(--radius-none);
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 4px;
+      height: 100%;
+      overflow-x: auto;
+    }
+    .nav-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--color-body);
+      font-family: var(--font-family);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.65px;
+      text-transform: uppercase;
+      padding: 0 16px;
+      height: 100%;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s ease, border-color 0.15s ease;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+    .nav-tab-btn:hover {
+      color: var(--color-ink);
+    }
+    .nav-tab-btn.active {
+      color: var(--color-ink);
+      border-bottom: 2px solid var(--color-primary);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Container */
+    .app-container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: var(--space-md) var(--space-sm);
+    }
+
+    /* Hero Editorial Band */
+    .hero-editorial {
+      border: 1px solid var(--color-hairline);
+      background: var(--color-canvas-elevated);
+      padding: var(--space-md);
+      margin-bottom: var(--space-md);
+      position: relative;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      color: var(--color-primary);
+      margin-bottom: var(--space-xxs);
+    }
+    .hero-title {
+      font-size: 42px;
+      font-weight: 500;
+      letter-spacing: -1.12px;
+      line-height: 1.1;
+      color: var(--color-ink);
+      margin-bottom: var(--space-xxs);
+      text-transform: uppercase;
+    }
+    .hero-sub {
+      color: var(--color-body);
+      font-size: 14px;
+      max-width: 700px;
+    }
+
+    /* Buttons: Sharp 0px corners, uppercase 1.4px tracking */
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-ink);
+      border: 1px solid var(--color-primary);
+      border-radius: var(--radius-none);
+      padding: 12px 28px;
+      font-family: var(--font-family);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+      border-color: var(--color-primary-hover);
+    }
+    .btn-primary:active {
+      background: var(--color-primary-active);
+      border-color: var(--color-primary-active);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--color-ink);
+      border: 1px solid var(--color-hairline);
+      border-radius: var(--radius-none);
+      padding: 12px 24px;
+      font-family: var(--font-family);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.15s ease, color 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-outline:hover {
+      border-color: var(--color-ink);
+      color: var(--color-ink);
+    }
+
+    /* Ingestion Bar */
+    .ingest-band {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: var(--space-sm);
+      align-items: center;
+      background: #1c1c1c;
+      border: 1px solid var(--color-hairline);
+      padding: var(--space-xs) var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .file-drop-zone {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+    }
+    .file-drop-zone input[type="file"] {
+      display: none;
+    }
+    .drop-label {
+      color: var(--color-body);
+      font-size: 13px;
+    }
+    .drop-label strong {
+      color: var(--color-ink);
+    }
+
+    /* Filter Controls Row */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--color-canvas-elevated);
+      border: 1px solid var(--color-hairline);
+      padding: var(--space-xs) var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .filter-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      color: var(--color-body);
+    }
+    select, input[type="text"], input[type="number"], input[type="date"] {
+      background: var(--color-canvas);
+      color: var(--color-ink);
+      border: 1px solid var(--color-hairline);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-family: var(--font-family);
+      font-size: 13px;
+      outline: none;
+    }
+    select:focus, input:focus {
+      border-color: var(--color-primary);
+    }
+
+    /* Spec Cells: Telemetry Metric Grid */
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin-bottom: var(--space-md);
+    }
+    .spec-card {
+      background: var(--color-surface-card);
+      border: 1px solid var(--color-hairline);
+      border-radius: var(--radius-none);
+      padding: 16px 20px;
+    }
+    .spec-card-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      color: var(--color-body);
+      margin-bottom: 6px;
+    }
+    .spec-card-value {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -1.2px;
+      color: var(--color-ink);
+      line-height: 1.1;
+    }
+    .spec-card-delta {
+      font-size: 12px;
+      color: var(--color-body);
+      margin-top: 4px;
+    }
+    .spec-card-delta.accent {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+    .grid-3-2 {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+
+    /* Card Panels */
+    .card-panel {
+      background: var(--color-surface-card);
+      border: 1px solid var(--color-hairline);
+      border-radius: var(--radius-none);
+      padding: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-xs);
+      border-bottom: 1px solid var(--color-hairline);
+      padding-bottom: 12px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--color-ink);
+    }
+    .card-caption {
+      font-size: 12px;
+      color: var(--color-body);
+    }
+
+    /* Data Tables */
+    .telemetry-table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .telemetry-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+    .telemetry-table th {
+      background: #191919;
+      color: var(--color-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-hairline);
+    }
+    .telemetry-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-hairline);
+      color: var(--color-ink);
+    }
+    .telemetry-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .p-rank {
+      color: var(--color-primary);
+      font-weight: 700;
+      font-size: 13px;
+      width: 45px;
+    }
+
+    /* Telemetry Pill Badge */
+    .badge-pill {
+      background: var(--color-hairline);
+      color: var(--color-ink);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      border-radius: var(--radius-full);
+      padding: 3px 10px;
+      display: inline-block;
+    }
+    .badge-pill.red {
+      background: var(--color-primary);
+      color: #ffffff;
+    }
+
+    /* Tab Content Hide/Show */
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Activity Heatmap Grid */
+    .cal-heatmap-grid {
+      display: grid;
+      grid-template-rows: repeat(7, 14px);
+      grid-auto-flow: column;
+      grid-auto-columns: 14px;
+      gap: 3px;
+      overflow-x: auto;
+      padding: 12px 0;
+    }
+    .cal-cell {
+      width: 14px;
+      height: 14px;
+      border-radius: 2px;
+      background: #222222;
+      cursor: pointer;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .grid-2, .grid-3, .grid-3-2 {
+        grid-template-columns: 1fr;
       }
-      #root {
-        height: 100%;
+      .hero-title {
+        font-size: 28px;
       }
-      #loading-screen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        background: #0E1117;
-        color: #FFFFFF;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        z-index: 9999;
+      .ingest-band {
+        grid-template-columns: 1fr;
       }
-      .spinner {
-        width: 48px;
-        height: 48px;
-        border: 4px solid rgba(255, 0, 85, 0.2);
-        border-top-color: #FF0055;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-bottom: 20px;
-      }
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="loading-screen">
-      <div class="spinner"></div>
-      <h2 style="margin: 0; font-size: 26px; font-weight: 800; background: linear-gradient(90deg, #FF0055, #00F0FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-        YT Music Wrapped Pro
-      </h2>
-      <p style="color: #8B949E; font-size: 14px; margin-top: 10px;">
-        Starting client-side Python & WebAssembly engine...
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Rosso Corsa Livery Band -->
+  <div class="livery-header-band"></div>
+
+  <!-- Editorial Top Navigation -->
+  <header class="top-nav">
+    <a href="#" class="brand-mark">
+      <span>YT MUSIC TELEMETRY</span>
+      <span class="brand-badge">PRO</span>
+    </a>
+    <nav class="nav-tabs">
+      <button class="nav-tab-btn active" data-tab="tab-overview">Overview</button>
+      <button class="nav-tab-btn" data-tab="tab-charts">Top Charts</button>
+      <button class="nav-tab-btn" data-tab="tab-timeline">Timeline</button>
+      <button class="nav-tab-btn" data-tab="tab-patterns">Habits & Sessions</button>
+      <button class="nav-tab-btn" data-tab="tab-discovery">Discovery</button>
+      <button class="nav-tab-btn" data-tab="tab-explorer">Explorer</button>
+      <button class="nav-tab-btn" data-tab="tab-wrapped">Wrapped Card</button>
+    </nav>
+  </header>
+
+  <!-- Main Container -->
+  <main class="app-container">
+
+    <!-- Hero Editorial Banner -->
+    <section class="hero-editorial">
+      <div class="hero-eyebrow">HIGH PRECISION AUDIO INTELLIGENCE • 100% PRIVATE & LOCAL</div>
+      <h1 class="hero-title" id="page-hero-title">SEASON TELEMETRY DASHBOARD</h1>
+      <p class="hero-sub">
+        Transform your Google Takeout YouTube Music history into high-performance telemetry. Zero network latency, instant client-side execution, editorial precision.
       </p>
-      <p style="color: #6E7681; font-size: 12px; margin-top: 4px;">
-        100% private. All processing runs directly inside your browser.
-      </p>
+    </section>
+
+    <!-- Ingestion & Data Management Bar -->
+    <div class="ingest-band">
+      <div class="file-drop-zone" onclick="document.getElementById('file-input').click()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#da291c" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+        <div class="drop-label">
+          <strong>Upload watch-history.json</strong> or drag file here
+          <span style="color: var(--color-muted); font-size: 11px; margin-left: 8px;">(Google Takeout JSON)</span>
+        </div>
+        <input type="file" id="file-input" accept=".json" />
+      </div>
+      <button class="btn-primary" id="btn-load-demo">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        LOAD DEMO SAMPLE DATA
+      </button>
+      <div id="data-status-badge" class="badge-pill" style="display: none;"></div>
     </div>
-    <div id="root"></div>
-    <script type="module">
-      import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser/build/stlite.js";
-      mount(
-        {
-          requirements: ["pandas", "plotly", "numpy"],
-          entrypoint: "app.py",
-          files: {
-            "app.py": { url: "./app.py" },
-            "charts.py": { url: "./charts.py" },
-            "cleaner.py": { url: "./cleaner.py" },
-            "metrics.py": { url: "./metrics.py" },
-            "parser.py": { url: "./parser.py" },
-            "sample_watch_history.json": { url: "./sample_watch_history.json" }
-          },
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">Filter Scope</span>
+        <select id="filter-year-select">
+          <option value="all">All-Time</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Duration Engine</span>
+        <select id="setting-gap-cap">
+          <option value="6">Gap Capped at 6m (Default)</option>
+          <option value="4">Gap Capped at 4m</option>
+          <option value="8">Gap Capped at 8m</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Session Break</span>
+        <select id="setting-session-gap">
+          <option value="30">30 Minutes (Standard)</option>
+          <option value="15">15 Minutes</option>
+          <option value="60">60 Minutes</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--color-body); cursor: pointer;">
+          <input type="checkbox" id="check-include-yt" />
+          Include Standard YouTube
+        </label>
+      </div>
+    </div>
+
+    <!-- Ingestion Telemetry Quality Expander -->
+    <div id="data-quality-panel" class="card-panel" style="display: none; padding: 16px 20px; margin-bottom: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="card-title">DATA INGESTION & QUALITY TELEMETRY</span>
+        <span id="quality-counts" style="font-size: 12px; color: var(--color-body);"></span>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         TAB 1: OVERVIEW
+         ===================================================================== -->
+    <div id="tab-overview" class="tab-pane active">
+      <!-- High Level Spec Cells -->
+      <div class="spec-grid">
+        <div class="spec-card">
+          <div class="spec-card-label">Total Plays</div>
+          <div class="spec-card-value" id="stat-total-plays">0</div>
+          <div class="spec-card-delta" id="stat-date-span">-</div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-card-label">Unique Tracks</div>
+          <div class="spec-card-value" id="stat-unique-tracks">0</div>
+          <div class="spec-card-delta" id="stat-avg-plays-track">-</div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-card-label">Unique Artists</div>
+          <div class="spec-card-value" id="stat-unique-artists">0</div>
+          <div class="spec-card-delta" id="stat-diversity-score">-</div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-card-label">Listening Time</div>
+          <div class="spec-card-value" id="stat-listening-hours" style="color: var(--color-primary);">0.0h</div>
+          <div class="spec-card-delta" id="stat-listening-days">-</div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-card-label">Active Days %</div>
+          <div class="spec-card-value" id="stat-active-days">0%</div>
+          <div class="spec-card-delta" id="stat-active-days-count">-</div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-card-label">Longest Streak</div>
+          <div class="spec-card-value" id="stat-longest-streak">0d</div>
+          <div class="spec-card-delta accent" id="stat-current-streak">-</div>
+        </div>
+      </div>
+
+      <!-- Main Overview Charts Split -->
+      <div class="grid-3-2">
+        <div class="card-panel">
+          <div class="card-header">
+            <span class="card-title">Monthly Listening Volume (Plays & Hours)</span>
+            <span class="badge-pill">Dual-Axis</span>
+          </div>
+          <div style="height: 340px; position: relative;">
+            <canvas id="chart-monthly-volume"></canvas>
+          </div>
+        </div>
+
+        <div class="card-panel">
+          <div class="card-header">
+            <span class="card-title">Time of Day Persona</span>
+            <span class="badge-pill" id="persona-badge">Archetype</span>
+          </div>
+          <div style="height: 340px; position: relative;">
+            <canvas id="chart-time-buckets"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calendar Activity Heatmap -->
+      <div class="card-panel">
+        <div class="card-header">
+          <span class="card-title">Daily Activity Telemetry Matrix</span>
+          <span class="card-caption">All-Time Play Intensity Map</span>
+        </div>
+        <div id="cal-heatmap-container" class="cal-heatmap-grid"></div>
+        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 12px; font-size: 11px; color: var(--color-muted);">
+          <span>LESS</span>
+          <span style="display: inline-block; width: 10px; height: 10px; background: #222;"></span>
+          <span style="display: inline-block; width: 10px; height: 10px; background: #4a120e;"></span>
+          <span style="display: inline-block; width: 10px; height: 10px; background: #8a1a12;"></span>
+          <span style="display: inline-block; width: 10px; height: 10px; background: #b01e0a;"></span>
+          <span style="display: inline-block; width: 10px; height: 10px; background: #da291c;"></span>
+          <span>MORE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         TAB 2: TOP CHARTS
+         ===================================================================== -->
+    <div id="tab-charts" class="tab-pane">
+      <div class="filter-bar" style="margin-bottom: 20px;">
+        <div class="filter-group">
+          <span class="filter-label">Display Limit</span>
+          <select id="charts-limit-select">
+            <option value="10">Top 10</option>
+            <option value="25" selected>Top 25</option>
+            <option value="50">Top 50</option>
+            <option value="100">Top 100</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Rank Artists By</span>
+          <select id="charts-rank-by">
+            <option value="plays">Total Plays</option>
+            <option value="hours">Listening Hours</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <button class="btn-outline" id="btn-export-artists-csv">Download Artists CSV</button>
+          <button class="btn-outline" id="btn-export-tracks-csv">Download Tracks CSV</button>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card-panel">
+          <div class="card-header">
+            <span class="card-title">Top Artists Leaderboard</span>
+          </div>
+          <div style="height: 380px; position: relative; margin-bottom: 20px;">
+            <canvas id="chart-top-artists"></canvas>
+          </div>
+          <div class="telemetry-table-wrapper" style="max-height: 400px;">
+            <table class="telemetry-table" id="table-top-artists">
+              <thead>
+                <tr>
+                  <th>Pos</th>
+                  <th>Artist</th>
+                  <th>Plays</th>
+                  <th>Hours</th>
+                  <th>Share %</th>
+                  <th>Tracks</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card-panel">
+          <div class="card-header">
+            <span class="card-title">Top Tracks Leaderboard</span>
+          </div>
+          <div style="height: 380px; position: relative; margin-bottom: 20px;">
+            <canvas id="chart-top-tracks"></canvas>
+          </div>
+          <div class="telemetry-table-wrapper" style="max-height: 400px;">
+            <table class="telemetry-table" id="table-top-tracks">
+              <thead>
+                <tr>
+                  <th>Pos</th>
+                  <th>Track</th>
+                  <th>Artist</th>
+                  <th>Plays</th>
+                  <th>Hours</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         TAB 3: TIMELINE
+         ===================================================================== -->
+    <div id="tab-timeline" class="tab-pane">
+      <div class="grid-3" style="margin-bottom: 24px;">
+        <div class="spec-card">
+          <div class="spec-card-label">Busiest Day Record</div>
+          <div class="spec-card-value" id="record-busiest-day-plays">0</div>
+          <div class="spec-card-delta" id="record-busiest-day-date">-</div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-card-label">Busiest Week Record</div>
+          <div class="spec-card-value" id="record-busiest-week-plays">0</div>
+          <div class="spec-card-delta" id="record-busiest-week-date">-</div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-card-label">Busiest Month Record</div>
+          <div class="spec-card-value" id="record-busiest-month-plays">0</div>
+          <div class="spec-card-delta" id="record-busiest-month-date">-</div>
+        </div>
+      </div>
+
+      <div class="card-panel">
+        <div class="card-header">
+          <span class="card-title">Year-over-Year Trajectory</span>
+          <span class="badge-pill">Annual Plays vs Hours</span>
+        </div>
+        <div style="height: 380px; position: relative;">
+          <canvas id="chart-yoy"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         TAB 4: HABITS & SESSIONS
+         ===================================================================== -->
+    <div id="tab-patterns" class="tab-pane">
+      <div class="grid-2">
+        <div class="card-panel">
+          <div class="card-header">
+            <span class="card-title">24-Hour Listening Distribution</span>
+          </div>
+          <div style="height: 340px; position: relative;">
+            <canvas id="chart-hourly-breakdown"></canvas>
+          </div>
+        </div>
+
+        <div class="card-panel">
+          <div class="card-header">
+            <span class="card-title">Weekday vs Weekend Dynamics</span>
+          </div>
+          <div class="spec-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 16px;">
+            <div class="spec-card">
+              <div class="spec-card-label">Weekday Plays</div>
+              <div class="spec-card-value" id="stat-weekday-plays">0</div>
+              <div class="spec-card-delta" id="stat-weekday-avg">-</div>
+            </div>
+            <div class="spec-card">
+              <div class="spec-card-label">Weekend Plays</div>
+              <div class="spec-card-value" id="stat-weekend-plays">0</div>
+              <div class="spec-card-delta" id="stat-weekend-avg">-</div>
+            </div>
+          </div>
+          <div class="telemetry-table-wrapper">
+            <table class="telemetry-table" id="table-seasonal">
+              <thead>
+                <tr>
+                  <th>Season</th>
+                  <th>Plays</th>
+                  <th>Hours</th>
+                  <th>Share %</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-panel">
+        <div class="card-header">
+          <span class="card-title">Session Telemetry Analytics</span>
+        </div>
+        <div class="spec-grid">
+          <div class="spec-card">
+            <div class="spec-card-label">Total Sessions</div>
+            <div class="spec-card-value" id="stat-sess-total">0</div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-card-label">Avg Session Length</div>
+            <div class="spec-card-value" id="stat-sess-avg">0 min</div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-card-label">Longest Session</div>
+            <div class="spec-card-value" id="stat-sess-longest" style="color: var(--color-primary);">0 min</div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-card-label">Avg Tracks / Session</div>
+            <div class="spec-card-value" id="stat-sess-tracks">0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         TAB 5: DISCOVERY & REPLAY
+         ===================================================================== -->
+    <div id="tab-discovery" class="tab-pane">
+      <div class="grid-2">
+        <div class="card-panel">
+          <div class="card-header">
+            <span class="card-title">Cumulative Music Discovery</span>
+            <span class="badge-pill">New Artists vs Tracks</span>
+          </div>
+          <div style="height: 340px; position: relative;">
+            <canvas id="chart-cumulative-growth"></canvas>
+          </div>
+        </div>
+
+        <div class="card-panel">
+          <div class="card-header">
+            <span class="card-title">Track Replay Distribution Tiers</span>
+          </div>
+          <div style="height: 340px; position: relative;">
+            <canvas id="chart-replay-tiers"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card-panel">
+          <div class="card-header">
+            <span class="card-title">Consecutive Repeat Loops (On Repeat)</span>
+            <span id="loop-count-badge" class="badge-pill red">0 Loops</span>
+          </div>
+          <div class="telemetry-table-wrapper" style="max-height: 350px;">
+            <table class="telemetry-table" id="table-repeat-loops">
+              <thead>
+                <tr>
+                  <th>Pos</th>
+                  <th>Track</th>
+                  <th>Artist</th>
+                  <th>Loops</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card-panel">
+          <div class="card-header">
+            <span class="card-title">Comeback Tracks (> 6-Month Hiatus)</span>
+          </div>
+          <div class="telemetry-table-wrapper" style="max-height: 350px;">
+            <table class="telemetry-table" id="table-comeback-tracks">
+              <thead>
+                <tr>
+                  <th>Pos</th>
+                  <th>Track</th>
+                  <th>Artist</th>
+                  <th>Dormant Days</th>
+                  <th>Comeback Date</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         TAB 6: EXPLORER (ARTIST & TRACK DEEP DIVE)
+         ===================================================================== -->
+    <div id="tab-explorer" class="tab-pane">
+      <div class="filter-bar">
+        <div class="filter-group">
+          <span class="filter-label">Explore Type</span>
+          <select id="explorer-type-select">
+            <option value="artist">Artist Deep-Dive</option>
+            <option value="track">Track Deep-Dive</option>
+          </select>
+        </div>
+        <div class="filter-group" style="flex: 1; max-width: 400px;">
+          <input type="text" id="explorer-search-input" placeholder="Search or select..." style="width: 100%;" />
+        </div>
+        <div class="filter-group">
+          <select id="explorer-item-select" style="max-width: 320px;"></select>
+        </div>
+      </div>
+
+      <div id="explorer-results-card" class="card-panel">
+        <div style="color: var(--color-body); padding: 24px; text-align: center;">
+          Select an artist or track above to launch deep-dive telemetry.
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         TAB 7: WRAPPED CARD
+         ===================================================================== -->
+    <div id="tab-wrapped" class="tab-pane">
+      <div class="filter-bar" style="margin-bottom: 24px;">
+        <div class="filter-group">
+          <span class="filter-label">Select Wrapped Year</span>
+          <select id="wrapped-year-select">
+            <option value="all">All-Time</option>
+          </select>
+        </div>
+        <button class="btn-primary" id="btn-download-wrapped-card">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          DOWNLOAD WRAPPED CARD (HTML)
+        </button>
+      </div>
+
+      <!-- Wrapped Card Render Area -->
+      <div id="wrapped-card-container"></div>
+
+      <!-- Play Milestones & Forgotten Gems -->
+      <div class="grid-2" style="margin-top: 32px;">
+        <div class="card-panel">
+          <div class="card-header">
+            <span class="card-title">Play Milestones</span>
+            <span class="badge-pill">Historical Anchors</span>
+          </div>
+          <div class="telemetry-table-wrapper">
+            <table class="telemetry-table" id="table-milestones">
+              <thead>
+                <tr>
+                  <th>Milestone</th>
+                  <th>Date</th>
+                  <th>Track</th>
+                  <th>Artist</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card-panel">
+          <div class="card-header">
+            <span class="card-title">Forgotten Gems (Rediscovery)</span>
+            <span class="card-caption">Favorites dormant in past 12 months</span>
+          </div>
+          <div class="telemetry-table-wrapper" style="max-height: 380px;">
+            <table class="telemetry-table" id="table-rediscovery">
+              <thead>
+                <tr>
+                  <th>Pos</th>
+                  <th>Track</th>
+                  <th>Artist</th>
+                  <th>Past Plays</th>
+                  <th>Last Played</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- =====================================================================
+       CLIENT ENGINE SCRIPT (Zero WASM bloat • Sub-millisecond Execution)
+       ===================================================================== -->
+  <script>
+    // Global State
+    let rawRecords = [];
+    let cleanRecords = [];
+    let filteredRecords = [];
+    let activeCharts = {};
+
+    // Chart.js Default Dark Ferrari Theme Setup
+    Chart.defaults.color = '#969696';
+    Chart.defaults.font.family = "'FerrariSans', 'Inter', -apple-system, sans-serif";
+    Chart.defaults.plugins.tooltip.backgroundColor = '#202020';
+    Chart.defaults.plugins.tooltip.titleColor = '#ffffff';
+    Chart.defaults.plugins.tooltip.bodyColor = '#969696';
+    Chart.defaults.plugins.tooltip.borderColor = '#303030';
+    Chart.defaults.plugins.tooltip.borderWidth = 1;
+    Chart.defaults.plugins.tooltip.cornerRadius = 0;
+    Chart.defaults.plugins.legend.labels.boxWidth = 12;
+
+    // Tab Navigation Switcher
+    document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        const targetId = btn.getAttribute('data-tab');
+        const targetPane = document.getElementById(targetId);
+        if (targetPane) targetPane.classList.add('active');
+      });
+    });
+
+    // File Upload Handler
+    document.getElementById('file-input').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const json = JSON.parse(evt.target.result);
+          processIngestion(Array.isArray(json) ? json : [json]);
+        } catch (err) {
+          alert('Failed to parse JSON file: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // Load Demo Data Handler
+    document.getElementById('btn-load-demo').addEventListener('click', async () => {
+      try {
+        const res = await fetch('./sample_watch_history.json');
+        if (!res.ok) throw new Error('File not accessible via HTTP');
+        const json = await res.json();
+        processIngestion(json);
+      } catch (err) {
+        // Fallback synthetic generator in JS
+        const fallbackData = generateSyntheticRecords(1200);
+        processIngestion(fallbackData);
+      }
+    });
+
+    // Synthetic Generator Fallback for offline double-click
+    function generateSyntheticRecords(count) {
+      const artists = ["Daft Punk", "The Weeknd", "Radiohead", "Taylor Swift", "Kendrick Lamar", "Pink Floyd", "Hans Zimmer", "Dua Lipa"];
+      const tracks = {
+        "Daft Punk": ["Instant Crush", "Get Lucky", "One More Time", "Around the World"],
+        "The Weeknd": ["Blinding Lights", "Starboy", "Save Your Tears", "Die For You"],
+        "Radiohead": ["Creep", "Karma Police", "No Surprises"],
+        "Taylor Swift": ["Cruel Summer", "Blank Space", "Anti-Hero"],
+        "Kendrick Lamar": ["HUMBLE.", "DNA.", "Alright"],
+        "Pink Floyd": ["Comfortably Numb", "Wish You Were Here", "Time"],
+        "Hans Zimmer": ["Time (Inception)", "Cornfield Chase"],
+        "Dua Lipa": ["Levitating", "Don't Start Now"]
+      };
+      const records = [];
+      let baseTime = new Date(2023, 0, 1, 9, 0, 0).getTime();
+      for (let i = 0; i < count; i++) {
+        const art = artists[Math.floor(Math.random() * artists.length)];
+        const trkList = tracks[art];
+        const trk = trkList[Math.floor(Math.random() * trkList.length)];
+        baseTime += (Math.random() > 0.85 ? 1000 * 60 * 60 * 4 : 1000 * (180 + Math.random() * 60));
+        records.push({
+          header: "YouTube Music",
+          title: "Watched " + trk,
+          titleUrl: "https://music.youtube.com/watch?v=demo_" + i,
+          subtitles: [{ name: art + " - Topic", url: "https://music.youtube.com/channel/demo" }],
+          time: new Date(baseTime).toISOString(),
+          products: ["YouTube"]
+        });
+      }
+      return records;
+    }
+
+    // Ingestion & Cleaning Engine
+    function processIngestion(raw) {
+      rawRecords = raw;
+      const includeYt = document.getElementById('check-include-yt').checked;
+      const gapCapMin = parseFloat(document.getElementById('setting-gap-cap').value) || 6.0;
+      const sessionGapMin = parseFloat(document.getElementById('setting-session-gap').value) || 30.0;
+      const defaultTrackMin = 3.5;
+
+      let droppedAds = 0;
+      let droppedNonMusic = 0;
+      const validRows = [];
+
+      for (let i = 0; i < raw.length; i++) {
+        const r = raw[i];
+        // Ad check
+        if (r.details) {
+          const dStr = JSON.stringify(r.details);
+          if (dStr.includes('From Google Ads')) {
+            droppedAds++;
+            continue;
+          }
+        }
+        // Header check
+        if (r.header && r.header !== 'YouTube Music' && !includeYt) {
+          droppedNonMusic++;
+          continue;
+        }
+        if (!r.time) continue;
+        validRows.push(r);
+      }
+
+      // Transform rows
+      let records = [];
+      for (let i = 0; i < validRows.length; i++) {
+        const row = validRows[i];
+        let title = (row.title || '').trim();
+        if (title.startsWith('Watched ')) title = title.substring(8).trim();
+        if (title.startsWith('http://') || title.startsWith('https://')) {
+          title = 'Removed Track';
+        }
+        if (!title) title = 'Unavailable Track';
+
+        let artist = 'Unknown Artist';
+        if (row.subtitles && row.subtitles.length > 0 && row.subtitles[0].name) {
+          artist = row.subtitles[0].name.replace(/\s*-\s*Topic$/i, '').trim();
+        }
+
+        // Parse Primary Artist
+        let primaryArtist = artist;
+        const featMatch = artist.match(/^(.*?)(?:\s+(?:feat\.|ft\.|with|&)\s+.*)$/i);
+        if (featMatch && featMatch[1]) {
+          primaryArtist = featMatch[1].trim();
+        }
+
+        const dateObj = new Date(row.time);
+        if (isNaN(dateObj.getTime())) continue;
+
+        records.push({
+          rawTitle: row.title,
+          title: title,
+          artist: artist,
+          primaryArtist: primaryArtist,
+          trackId: title + ' - ' + primaryArtist,
+          dateObj: dateObj,
+          timestamp: dateObj.getTime(),
+          dateStr: dateObj.toISOString().slice(0, 10),
+          year: dateObj.getFullYear(),
+          month: dateObj.toISOString().slice(0, 7),
+          hour: dateObj.getHours(),
+          dayOfWeek: dateObj.getDay(),
+          videoUrl: row.titleUrl || ''
+        });
+      }
+
+      // Sort chronological ascending
+      records.sort((a, b) => a.timestamp - b.timestamp);
+
+      // Deduplicate identical trackId at same timestamp
+      const deduped = [];
+      const seen = new Set();
+      for (let i = 0; i < records.length; i++) {
+        const key = records[i].trackId + '|' + records[i].timestamp;
+        if (!seen.has(key)) {
+          seen.add(key);
+          deduped.push(records[i]);
+        }
+      }
+      const duplicateCount = records.length - deduped.length;
+      records = deduped;
+
+      // Gap duration estimation & session detection
+      const gapCapSec = gapCapMin * 60;
+      const defaultTrackSec = defaultTrackMin * 60;
+      const sessionGapSec = sessionGapMin * 60;
+
+      let currentSessionId = 1;
+      for (let i = 0; i < records.length; i++) {
+        // Gap to next
+        if (i < records.length - 1) {
+          const gapSec = (records[i + 1].timestamp - records[i].timestamp) / 1000;
+          records[i].gapToNextSec = gapSec;
+          records[i].isSkip = gapSec > 0 && gapSec < 30;
+          records[i].durationSec = (gapSec > 0 && gapSec <= gapCapSec) ? gapSec : defaultTrackSec;
+        } else {
+          records[i].gapToNextSec = 0;
+          records[i].isSkip = false;
+          records[i].durationSec = defaultTrackSec;
+        }
+        records[i].durationHours = records[i].durationSec / 3600;
+
+        // Session ID
+        if (i > 0) {
+          const gapFromPrev = (records[i].timestamp - records[i - 1].timestamp) / 1000;
+          if (gapFromPrev > sessionGapSec) {
+            currentSessionId++;
+          }
+        }
+        records[i].sessionId = currentSessionId;
+      }
+
+      cleanRecords = records;
+
+      // Update Data Quality Bar
+      const qualityPanel = document.getElementById('data-quality-panel');
+      qualityPanel.style.display = 'block';
+      document.getElementById('quality-counts').innerHTML = `
+        Parsed: <strong>${raw.length.toLocaleString()}</strong> |
+        Ads Dropped: <strong>${droppedAds}</strong> |
+        Non-Music: <strong>${droppedNonMusic}</strong> |
+        Duplicates Merged: <strong>${duplicateCount}</strong> |
+        Clean Music Plays: <strong style="color: var(--color-primary);">${cleanRecords.length.toLocaleString()}</strong>
+      `;
+
+      // Populate Year Select
+      const years = Array.from(new Set(cleanRecords.map(r => r.year))).sort((a, b) => b - a);
+      const yearSelect = document.getElementById('filter-year-select');
+      const wrappedYearSelect = document.getElementById('wrapped-year-select');
+      yearSelect.innerHTML = '<option value="all">All-Time</option>';
+      wrappedYearSelect.innerHTML = '<option value="all">All-Time</option>';
+      years.forEach(y => {
+        yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+        wrappedYearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+      });
+
+      // Populate Explorer Selects
+      populateExplorerDropdowns();
+
+      applyFilters();
+    }
+
+    // Filter Change Listeners
+    document.getElementById('filter-year-select').addEventListener('change', applyFilters);
+    document.getElementById('setting-gap-cap').addEventListener('change', () => processIngestion(rawRecords));
+    document.getElementById('setting-session-gap').addEventListener('change', () => processIngestion(rawRecords));
+    document.getElementById('check-include-yt').addEventListener('change', () => processIngestion(rawRecords));
+    document.getElementById('charts-limit-select').addEventListener('change', updateTopCharts);
+    document.getElementById('charts-rank-by').addEventListener('change', updateTopCharts);
+    document.getElementById('wrapped-year-select').addEventListener('change', renderWrappedCard);
+
+    function applyFilters() {
+      const selectedYear = document.getElementById('filter-year-select').value;
+      if (selectedYear === 'all') {
+        filteredRecords = cleanRecords;
+        document.getElementById('page-hero-title').innerText = 'ALL-TIME TELEMETRY DASHBOARD';
+      } else {
+        const y = parseInt(selectedYear, 10);
+        filteredRecords = cleanRecords.filter(r => r.year === y);
+        document.getElementById('page-hero-title').innerText = `${y} SEASON TELEMETRY DASHBOARD`;
+      }
+
+      renderOverview();
+      updateTopCharts();
+      renderTimeline();
+      renderPatterns();
+      renderDiscovery();
+      renderWrappedCard();
+    }
+
+    // =========================================================================
+    // 1. RENDER OVERVIEW
+    // =========================================================================
+    function renderOverview() {
+      if (filteredRecords.length === 0) return;
+
+      const totalPlays = filteredRecords.length;
+      const uniqueTracks = new Set(filteredRecords.map(r => r.trackId)).size;
+      const uniqueArtists = new Set(filteredRecords.map(r => r.primaryArtist)).size;
+      const totalHours = filteredRecords.reduce((sum, r) => sum + r.durationHours, 0);
+      const totalDays = totalHours / 24;
+
+      const dates = Array.from(new Set(filteredRecords.map(r => r.dateStr))).sort();
+      const firstDate = dates[0];
+      const lastDate = dates[dates.length - 1];
+      const spanDays = Math.max(1, Math.round((new Date(lastDate) - new Date(firstDate)) / 86400000) + 1);
+      const activeDaysPct = ((dates.length / spanDays) * 100).toFixed(1);
+
+      document.getElementById('stat-total-plays').innerText = totalPlays.toLocaleString();
+      document.getElementById('stat-date-span').innerText = `${firstDate} to ${lastDate}`;
+      document.getElementById('stat-unique-tracks').innerText = uniqueTracks.toLocaleString();
+      document.getElementById('stat-avg-plays-track').innerText = `Avg ${(totalPlays / Math.max(1, uniqueTracks)).toFixed(1)} plays/track`;
+      document.getElementById('stat-unique-artists').innerText = uniqueArtists.toLocaleString();
+      document.getElementById('stat-listening-hours').innerText = `${totalHours.toFixed(1)}h`;
+      document.getElementById('stat-listening-days').innerText = `${totalDays.toFixed(1)} days listening`;
+      document.getElementById('stat-active-days').innerText = `${activeDaysPct}%`;
+      document.getElementById('stat-active-days-count').innerText = `${dates.length} of ${spanDays} days`;
+
+      // Streaks calculation
+      let longestStreak = 1, currentStreak = 1;
+      for (let i = 1; i < dates.length; i++) {
+        const diff = Math.round((new Date(dates[i]) - new Date(dates[i - 1])) / 86400000);
+        if (diff === 1) {
+          currentStreak++;
+          if (currentStreak > longestStreak) longestStreak = currentStreak;
+        } else {
+          currentStreak = 1;
+        }
+      }
+      document.getElementById('stat-longest-streak').innerText = `${longestStreak}d`;
+      document.getElementById('stat-current-streak').innerText = `Active Span: ${spanDays}d`;
+
+      // Monthly Volume Chart
+      const monthlyData = {};
+      filteredRecords.forEach(r => {
+        if (!monthlyData[r.month]) monthlyData[r.month] = { plays: 0, hours: 0 };
+        monthlyData[r.month].plays++;
+        monthlyData[r.month].hours += r.durationHours;
+      });
+      const months = Object.keys(monthlyData).sort();
+      const monthlyPlays = months.map(m => monthlyData[m].plays);
+      const monthlyHours = months.map(m => parseFloat(monthlyData[m].hours.toFixed(1)));
+
+      createOrUpdateChart('chart-monthly-volume', {
+        type: 'bar',
+        data: {
+          labels: months,
+          datasets: [
+            {
+              label: 'Plays',
+              data: monthlyPlays,
+              backgroundColor: '#da291c',
+              yAxisID: 'y',
+              borderRadius: 0
+            },
+            {
+              label: 'Hours',
+              data: monthlyHours,
+              type: 'line',
+              borderColor: '#ffffff',
+              borderWidth: 2,
+              pointBackgroundColor: '#ffffff',
+              pointRadius: 3,
+              yAxisID: 'y1'
+            }
+          ]
         },
-        document.getElementById("root")
-      ).then(() => {
-        const loader = document.getElementById("loading-screen");
-        if (loader) {
-          loader.style.opacity = "0";
-          loader.style.transition = "opacity 0.4s ease";
-          setTimeout(() => loader.remove(), 400);
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: '#262626' } },
+            y: { grid: { color: '#262626' }, title: { display: true, text: 'Plays' } },
+            y1: { position: 'right', grid: { display: false }, title: { display: true, text: 'Hours' } }
+          }
         }
       });
-    </script>
-  </body>
+
+      // Time of Day Persona Donut
+      const buckets = { 'Morning (5a-12p)': 0, 'Afternoon (12p-5p)': 0, 'Evening (5p-10p)': 0, 'Night Owl (10p-5a)': 0 };
+      filteredRecords.forEach(r => {
+        const h = r.hour;
+        if (h >= 5 && h < 12) buckets['Morning (5a-12p)']++;
+        else if (h >= 12 && h < 17) buckets['Afternoon (12p-5p)']++;
+        else if (h >= 17 && h < 22) buckets['Evening (5p-10p)']++;
+        else buckets['Night Owl (10p-5a)']++;
+      });
+      const topBucket = Object.keys(buckets).reduce((a, b) => buckets[a] > buckets[b] ? a : b);
+      document.getElementById('persona-badge').innerText = topBucket.split(' ')[0];
+
+      createOrUpdateChart('chart-time-buckets', {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(buckets),
+          datasets: [{
+            data: Object.values(buckets),
+            backgroundColor: ['#da291c', '#b01e0a', '#ffffff', '#444444'],
+            borderColor: '#181818',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+
+      // Activity Heatmap
+      renderCalendarHeatmap(dates);
+    }
+
+    function renderCalendarHeatmap(dates) {
+      const container = document.getElementById('cal-heatmap-container');
+      container.innerHTML = '';
+      const counts = {};
+      filteredRecords.forEach(r => {
+        counts[r.dateStr] = (counts[r.dateStr] || 0) + 1;
+      });
+      const maxCount = Math.max(...Object.values(counts), 1);
+
+      // Render 52 weeks
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(endDate.getDate() - 364);
+
+      for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+        const iso = d.toISOString().slice(0, 10);
+        const cnt = counts[iso] || 0;
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell';
+        cell.title = `${iso}: ${cnt} plays`;
+        if (cnt > 0) {
+          const ratio = cnt / maxCount;
+          if (ratio > 0.75) cell.style.background = '#da291c';
+          else if (ratio > 0.5) cell.style.background = '#b01e0a';
+          else if (ratio > 0.25) cell.style.background = '#8a1a12';
+          else cell.style.background = '#4a120e';
+        }
+        container.appendChild(cell);
+      }
+    }
+
+    // =========================================================================
+    // 2. RENDER TOP CHARTS
+    // =========================================================================
+    function updateTopCharts() {
+      if (filteredRecords.length === 0) return;
+      const limit = parseInt(document.getElementById('charts-limit-select').value, 10) || 25;
+      const rankBy = document.getElementById('charts-rank-by').value;
+
+      // Artists aggregation
+      const artistMap = {};
+      filteredRecords.forEach(r => {
+        if (!artistMap[r.primaryArtist]) {
+          artistMap[r.primaryArtist] = { name: r.primaryArtist, plays: 0, hours: 0, tracks: new Set() };
+        }
+        artistMap[r.primaryArtist].plays++;
+        artistMap[r.primaryArtist].hours += r.durationHours;
+        artistMap[r.primaryArtist].tracks.add(r.title);
+      });
+      let artists = Object.values(artistMap);
+      if (rankBy === 'hours') {
+        artists.sort((a, b) => b.hours - a.hours);
+      } else {
+        artists.sort((a, b) => b.plays - a.plays);
+      }
+      const topArtists = artists.slice(0, limit);
+
+      // Artist Table
+      const artTbody = document.querySelector('#table-top-artists tbody');
+      artTbody.innerHTML = '';
+      topArtists.forEach((a, idx) => {
+        const share = ((a.plays / filteredRecords.length) * 100).toFixed(1);
+        artTbody.innerHTML += `
+          <tr>
+            <td class="p-rank">P${idx + 1}</td>
+            <td style="font-weight: 600;">${escapeHtml(a.name)}</td>
+            <td>${a.plays.toLocaleString()}</td>
+            <td>${a.hours.toFixed(1)}h</td>
+            <td>${share}%</td>
+            <td>${a.tracks.size}</td>
+          </tr>
+        `;
+      });
+
+      // Artist Bar Chart
+      createOrUpdateChart('chart-top-artists', {
+        type: 'bar',
+        data: {
+          labels: topArtists.slice(0, 10).map(a => a.name),
+          datasets: [{
+            label: rankBy === 'hours' ? 'Listening Hours' : 'Plays',
+            data: topArtists.slice(0, 10).map(a => rankBy === 'hours' ? parseFloat(a.hours.toFixed(1)) : a.plays),
+            backgroundColor: '#da291c',
+            borderRadius: 0
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: '#262626' } },
+            y: { grid: { display: false } }
+          }
+        }
+      });
+
+      // Tracks aggregation
+      const trackMap = {};
+      filteredRecords.forEach(r => {
+        if (!trackMap[r.trackId]) {
+          trackMap[r.trackId] = { title: r.title, artist: r.primaryArtist, plays: 0, hours: 0 };
+        }
+        trackMap[r.trackId].plays++;
+        trackMap[r.trackId].hours += r.durationHours;
+      });
+      const tracks = Object.values(trackMap).sort((a, b) => b.plays - a.plays).slice(0, limit);
+
+      // Track Table
+      const trkTbody = document.querySelector('#table-top-tracks tbody');
+      trkTbody.innerHTML = '';
+      tracks.forEach((t, idx) => {
+        trkTbody.innerHTML += `
+          <tr>
+            <td class="p-rank">P${idx + 1}</td>
+            <td style="font-weight: 600;">${escapeHtml(t.title)}</td>
+            <td style="color: var(--color-body);">${escapeHtml(t.artist)}</td>
+            <td>${t.plays.toLocaleString()}</td>
+            <td>${t.hours.toFixed(1)}h</td>
+          </tr>
+        `;
+      });
+
+      // Track Bar Chart
+      createOrUpdateChart('chart-top-tracks', {
+        type: 'bar',
+        data: {
+          labels: tracks.slice(0, 10).map(t => t.title),
+          datasets: [{
+            label: 'Plays',
+            data: tracks.slice(0, 10).map(t => t.plays),
+            backgroundColor: '#ffffff',
+            borderRadius: 0
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: '#262626' } },
+            y: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    // Export CSV Handlers
+    document.getElementById('btn-export-artists-csv').addEventListener('click', () => {
+      const artistMap = {};
+      filteredRecords.forEach(r => {
+        if (!artistMap[r.primaryArtist]) artistMap[r.primaryArtist] = { name: r.primaryArtist, plays: 0, hours: 0 };
+        artistMap[r.primaryArtist].plays++;
+        artistMap[r.primaryArtist].hours += r.durationHours;
+      });
+      const rows = [['Rank', 'Artist', 'Plays', 'Hours']];
+      Object.values(artistMap).sort((a, b) => b.plays - a.plays).forEach((a, i) => {
+        rows.push([i + 1, `"${a.name.replace(/"/g, '""')}"`, a.plays, a.hours.toFixed(1)]);
+      });
+      downloadCsv(rows.map(e => e.join(',')).join('\n'), 'top_artists_telemetry.csv');
+    });
+
+    document.getElementById('btn-export-tracks-csv').addEventListener('click', () => {
+      const trackMap = {};
+      filteredRecords.forEach(r => {
+        if (!trackMap[r.trackId]) trackMap[r.trackId] = { title: r.title, artist: r.primaryArtist, plays: 0, hours: 0 };
+        trackMap[r.trackId].plays++;
+        trackMap[r.trackId].hours += r.durationHours;
+      });
+      const rows = [['Rank', 'Track', 'Artist', 'Plays', 'Hours']];
+      Object.values(trackMap).sort((a, b) => b.plays - a.plays).forEach((t, i) => {
+        rows.push([i + 1, `"${t.title.replace(/"/g, '""')}"`, `"${t.artist.replace(/"/g, '""')}"`, t.plays, t.hours.toFixed(1)]);
+      });
+      downloadCsv(rows.map(e => e.join(',')).join('\n'), 'top_tracks_telemetry.csv');
+    });
+
+    // =========================================================================
+    // 3. RENDER TIMELINE
+    // =========================================================================
+    function renderTimeline() {
+      if (filteredRecords.length === 0) return;
+
+      // All-Time Records (Day, Week, Month)
+      const dayCounts = {};
+      const weekCounts = {};
+      const monthCounts = {};
+
+      filteredRecords.forEach(r => {
+        dayCounts[r.dateStr] = (dayCounts[r.dateStr] || 0) + 1;
+        monthCounts[r.month] = (monthCounts[r.month] || 0) + 1;
+        // Week calculation
+        const weekKey = `${r.year}-W${Math.ceil((r.dateObj.getDate() + 6) / 7)}`;
+        weekCounts[weekKey] = (weekCounts[weekKey] || 0) + 1;
+      });
+
+      const bestDay = Object.keys(dayCounts).reduce((a, b) => dayCounts[a] > dayCounts[b] ? a : b, '');
+      const bestMonth = Object.keys(monthCounts).reduce((a, b) => monthCounts[a] > monthCounts[b] ? a : b, '');
+      const bestWeek = Object.keys(weekCounts).reduce((a, b) => weekCounts[a] > weekCounts[b] ? a : b, '');
+
+      if (bestDay) {
+        document.getElementById('record-busiest-day-plays').innerText = dayCounts[bestDay].toLocaleString();
+        document.getElementById('record-busiest-day-date').innerText = bestDay;
+      }
+      if (bestWeek) {
+        document.getElementById('record-busiest-week-plays').innerText = weekCounts[bestWeek].toLocaleString();
+        document.getElementById('record-busiest-week-date').innerText = bestWeek;
+      }
+      if (bestMonth) {
+        document.getElementById('record-busiest-month-plays').innerText = monthCounts[bestMonth].toLocaleString();
+        document.getElementById('record-busiest-month-date').innerText = bestMonth;
+      }
+
+      // YoY Chart
+      const yearly = {};
+      cleanRecords.forEach(r => {
+        if (!yearly[r.year]) yearly[r.year] = { plays: 0, hours: 0 };
+        yearly[r.year].plays++;
+        yearly[r.year].hours += r.durationHours;
+      });
+      const yrKeys = Object.keys(yearly).sort();
+
+      createOrUpdateChart('chart-yoy', {
+        type: 'bar',
+        data: {
+          labels: yrKeys,
+          datasets: [
+            {
+              label: 'Total Plays',
+              data: yrKeys.map(y => yearly[y].plays),
+              backgroundColor: '#da291c',
+              yAxisID: 'y'
+            },
+            {
+              label: 'Total Hours',
+              data: yrKeys.map(y => parseFloat(yearly[y].hours.toFixed(1))),
+              type: 'line',
+              borderColor: '#ffffff',
+              borderWidth: 2,
+              pointBackgroundColor: '#ffffff',
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: '#262626' } },
+            y: { grid: { color: '#262626' } },
+            y1: { position: 'right', grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    // =========================================================================
+    // 4. RENDER PATTERNS & SESSIONS
+    // =========================================================================
+    function renderPatterns() {
+      if (filteredRecords.length === 0) return;
+
+      // 24 Hour Breakdown
+      const hourCounts = new Array(24).fill(0);
+      filteredRecords.forEach(r => hourCounts[r.hour]++);
+      const hourLabels = hourCounts.map((_, h) => `${h.toString().padStart(2, '0')}:00`);
+
+      createOrUpdateChart('chart-hourly-breakdown', {
+        type: 'bar',
+        data: {
+          labels: hourLabels,
+          datasets: [{
+            label: 'Plays by Hour',
+            data: hourCounts,
+            backgroundColor: '#da291c',
+            borderRadius: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { display: false } },
+            y: { grid: { color: '#262626' } }
+          }
+        }
+      });
+
+      // Weekday vs Weekend
+      let wdPlays = 0, wePlays = 0;
+      filteredRecords.forEach(r => {
+        if (r.dayOfWeek === 0 || r.dayOfWeek === 6) wePlays++;
+        else wdPlays++;
+      });
+      document.getElementById('stat-weekday-plays').innerText = wdPlays.toLocaleString();
+      document.getElementById('stat-weekday-avg').innerText = `${((wdPlays / filteredRecords.length) * 100).toFixed(1)}% of all plays`;
+      document.getElementById('stat-weekend-plays').innerText = wePlays.toLocaleString();
+      document.getElementById('stat-weekend-avg').innerText = `${((wePlays / filteredRecords.length) * 100).toFixed(1)}% of all plays`;
+
+      // Seasonal Breakdown
+      const seasonMap = { Winter: { plays: 0, hours: 0 }, Spring: { plays: 0, hours: 0 }, Summer: { plays: 0, hours: 0 }, Fall: { plays: 0, hours: 0 } };
+      filteredRecords.forEach(r => {
+        const m = r.dateObj.getMonth() + 1;
+        let s = 'Fall';
+        if (m === 12 || m <= 2) s = 'Winter';
+        else if (m >= 3 && m <= 5) s = 'Spring';
+        else if (m >= 6 && m <= 8) s = 'Summer';
+        seasonMap[s].plays++;
+        seasonMap[s].hours += r.durationHours;
+      });
+      const seasonTbody = document.querySelector('#table-seasonal tbody');
+      seasonTbody.innerHTML = '';
+      Object.keys(seasonMap).forEach(s => {
+        const p = seasonMap[s].plays;
+        const h = seasonMap[s].hours.toFixed(1);
+        const pct = ((p / filteredRecords.length) * 100).toFixed(1);
+        seasonTbody.innerHTML += `
+          <tr>
+            <td style="font-weight: 600;">${s}</td>
+            <td>${p.toLocaleString()}</td>
+            <td>${h}h</td>
+            <td>${pct}%</td>
+          </tr>
+        `;
+      });
+
+      // Session Stats
+      const sessionMap = {};
+      filteredRecords.forEach(r => {
+        if (!sessionMap[r.sessionId]) sessionMap[r.sessionId] = { count: 0, durationSec: 0 };
+        sessionMap[r.sessionId].count++;
+        sessionMap[r.sessionId].durationSec += r.durationSec;
+      });
+      const sessions = Object.values(sessionMap);
+      const totalSess = sessions.length;
+      const avgDuration = totalSess > 0 ? (sessions.reduce((s, x) => s + x.durationSec, 0) / totalSess / 60).toFixed(1) : 0;
+      const maxDuration = totalSess > 0 ? (Math.max(...sessions.map(x => x.durationSec)) / 60).toFixed(1) : 0;
+      const avgTracks = totalSess > 0 ? (filteredRecords.length / totalSess).toFixed(1) : 0;
+
+      document.getElementById('stat-sess-total').innerText = totalSess.toLocaleString();
+      document.getElementById('stat-sess-avg').innerText = `${avgDuration} min`;
+      document.getElementById('stat-sess-longest').innerText = `${maxDuration} min`;
+      document.getElementById('stat-sess-tracks').innerText = avgTracks;
+    }
+
+    // =========================================================================
+    // 5. RENDER DISCOVERY & REPLAY
+    // =========================================================================
+    function renderDiscovery() {
+      if (filteredRecords.length === 0) return;
+
+      // Cumulative Unique Artists & Tracks Growth
+      const seenArt = new Set();
+      const seenTrk = new Set();
+      const cumTimeline = [];
+
+      filteredRecords.forEach((r, idx) => {
+        seenArt.add(r.primaryArtist);
+        seenTrk.add(r.trackId);
+        if (idx % Math.max(1, Math.floor(filteredRecords.length / 50)) === 0 || idx === filteredRecords.length - 1) {
+          cumTimeline.push({
+            date: r.dateStr,
+            artists: seenArt.size,
+            tracks: seenTrk.size
+          });
+        }
+      });
+
+      createOrUpdateChart('chart-cumulative-growth', {
+        type: 'line',
+        data: {
+          labels: cumTimeline.map(c => c.date),
+          datasets: [
+            {
+              label: 'Unique Tracks',
+              data: cumTimeline.map(c => c.tracks),
+              borderColor: '#ffffff',
+              borderWidth: 2,
+              fill: true,
+              backgroundColor: 'rgba(255, 255, 255, 0.04)',
+              pointRadius: 0
+            },
+            {
+              label: 'Unique Artists',
+              data: cumTimeline.map(c => c.artists),
+              borderColor: '#da291c',
+              borderWidth: 2,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: '#262626' } },
+            y: { grid: { color: '#262626' } }
+          }
+        }
+      });
+
+      // Replay Tiers
+      const trackCounts = {};
+      filteredRecords.forEach(r => trackCounts[r.trackId] = (trackCounts[r.trackId] || 0) + 1);
+      const countsArr = Object.values(trackCounts);
+      const tier1 = countsArr.filter(c => c === 1).length;
+      const tier2_5 = countsArr.filter(c => c >= 2 && c <= 5).length;
+      const tier6_20 = countsArr.filter(c => c >= 6 && c <= 20).length;
+      const tier20Plus = countsArr.filter(c => c > 20).length;
+
+      createOrUpdateChart('chart-replay-tiers', {
+        type: 'doughnut',
+        data: {
+          labels: ['Played Once', 'Occasional (2-5)', 'Frequent (6-20)', 'Obsessions (20+)'],
+          datasets: [{
+            data: [tier1, tier2_5, tier6_20, tier20Plus],
+            backgroundColor: ['#303030', '#666666', '#d2d2d2', '#da291c'],
+            borderColor: '#181818',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '60%',
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+
+      // Repeat Loops
+      let loopCount = 0;
+      const loopMap = {};
+      for (let i = 1; i < filteredRecords.length; i++) {
+        if (filteredRecords[i].trackId === filteredRecords[i - 1].trackId && filteredRecords[i].sessionId === filteredRecords[i - 1].sessionId) {
+          loopCount++;
+          const t = filteredRecords[i];
+          loopMap[t.trackId] = (loopMap[t.trackId] || { title: t.title, artist: t.primaryArtist, loops: 0 });
+          loopMap[t.trackId].loops++;
+        }
+      }
+      document.getElementById('loop-count-badge').innerText = `${loopCount} Loops Detected`;
+      const loopList = Object.values(loopMap).sort((a, b) => b.loops - a.loops).slice(0, 15);
+      const loopTbody = document.querySelector('#table-repeat-loops tbody');
+      loopTbody.innerHTML = '';
+      loopList.forEach((item, idx) => {
+        loopTbody.innerHTML += `
+          <tr>
+            <td class="p-rank">P${idx + 1}</td>
+            <td style="font-weight: 600;">${escapeHtml(item.title)}</td>
+            <td style="color: var(--color-body);">${escapeHtml(item.artist)}</td>
+            <td style="color: var(--color-primary); font-weight: 700;">${item.loops}</td>
+          </tr>
+        `;
+      });
+
+      // Comeback Tracks (180+ days hiatus)
+      const lastSeen = {};
+      const comebacks = [];
+      filteredRecords.forEach(r => {
+        if (lastSeen[r.trackId]) {
+          const diffDays = (r.timestamp - lastSeen[r.trackId]) / 86400000;
+          if (diffDays >= 180) {
+            comebacks.push({
+              title: r.title,
+              artist: r.primaryArtist,
+              gapDays: Math.round(diffDays),
+              date: r.dateStr
+            });
+          }
+        }
+        lastSeen[r.trackId] = r.timestamp;
+      });
+      comebacks.sort((a, b) => b.gapDays - a.gapDays);
+      const cbTbody = document.querySelector('#table-comeback-tracks tbody');
+      cbTbody.innerHTML = '';
+      comebacks.slice(0, 15).forEach((c, idx) => {
+        cbTbody.innerHTML += `
+          <tr>
+            <td class="p-rank">P${idx + 1}</td>
+            <td style="font-weight: 600;">${escapeHtml(c.title)}</td>
+            <td style="color: var(--color-body);">${escapeHtml(c.artist)}</td>
+            <td>${c.gapDays} days</td>
+            <td>${c.date}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // =========================================================================
+    // 6. RENDER EXPLORER
+    // =========================================================================
+    function populateExplorerDropdowns() {
+      const artSelect = document.getElementById('explorer-item-select');
+      const artists = Array.from(new Set(cleanRecords.map(r => r.primaryArtist))).sort();
+      artSelect.innerHTML = '';
+      artists.forEach(a => {
+        artSelect.innerHTML += `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`;
+      });
+      if (artists.length > 0) renderExplorerDetail(artists[0], 'artist');
+    }
+
+    document.getElementById('explorer-type-select').addEventListener('change', (e) => {
+      const type = e.target.value;
+      const select = document.getElementById('explorer-item-select');
+      select.innerHTML = '';
+      if (type === 'artist') {
+        const artists = Array.from(new Set(cleanRecords.map(r => r.primaryArtist))).sort();
+        artists.forEach(a => select.innerHTML += `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`);
+        if (artists.length > 0) renderExplorerDetail(artists[0], 'artist');
+      } else {
+        const tracks = Array.from(new Set(cleanRecords.map(r => r.title))).sort();
+        tracks.forEach(t => select.innerHTML += `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`);
+        if (tracks.length > 0) renderExplorerDetail(tracks[0], 'track');
+      }
+    });
+
+    document.getElementById('explorer-item-select').addEventListener('change', (e) => {
+      const type = document.getElementById('explorer-type-select').value;
+      renderExplorerDetail(e.target.value, type);
+    });
+
+    function renderExplorerDetail(targetName, type) {
+      const container = document.getElementById('explorer-results-card');
+      if (type === 'artist') {
+        const subset = cleanRecords.filter(r => r.primaryArtist === targetName);
+        if (subset.length === 0) return;
+        const totalPlays = subset.length;
+        const totalHours = subset.reduce((s, r) => s + r.durationHours, 0);
+        const uniqueTracks = new Set(subset.map(r => r.title)).size;
+        const sharePct = ((totalPlays / cleanRecords.length) * 100).toFixed(1);
+
+        const trkCounts = {};
+        subset.forEach(r => trkCounts[r.title] = (trkCounts[r.title] || 0) + 1);
+        const topSongs = Object.entries(trkCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+        container.innerHTML = `
+          <div style="border-bottom: 1px solid var(--color-hairline); padding-bottom: 16px; margin-bottom: 20px;">
+            <div style="font-size: 11px; text-transform: uppercase; color: var(--color-primary); letter-spacing: 1.1px; font-weight: 700;">ARTIST DEEP-DIVE TELEMETRY</div>
+            <h2 style="font-size: 28px; font-weight: 500; color: #ffffff; margin-top: 4px;">${escapeHtml(targetName)}</h2>
+          </div>
+          <div class="spec-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 20px;">
+            <div class="spec-card">
+              <div class="spec-card-label">Total Plays</div>
+              <div class="spec-card-value">${totalPlays.toLocaleString()}</div>
+            </div>
+            <div class="spec-card">
+              <div class="spec-card-label">Listening Time</div>
+              <div class="spec-card-value" style="color: var(--color-primary);">${totalHours.toFixed(1)}h</div>
+            </div>
+            <div class="spec-card">
+              <div class="spec-card-label">Catalog Unique Tracks</div>
+              <div class="spec-card-value">${uniqueTracks}</div>
+            </div>
+            <div class="spec-card">
+              <div class="spec-card-label">All-Time Listening Share</div>
+              <div class="spec-card-value">${sharePct}%</div>
+            </div>
+          </div>
+          <div class="card-title" style="margin-bottom: 12px;">Top Tracks by ${escapeHtml(targetName)}</div>
+          <ul style="list-style: none; border: 1px solid var(--color-hairline);">
+            ${topSongs.map(([title, p], i) => `
+              <li style="display: flex; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--color-hairline);">
+                <span><strong style="color: var(--color-primary); margin-right: 8px;">P${i+1}</strong> ${escapeHtml(title)}</span>
+                <span style="font-weight: 700;">${p} plays</span>
+              </li>
+            `).join('')}
+          </ul>
+        `;
+      } else {
+        const subset = cleanRecords.filter(r => r.title === targetName);
+        if (subset.length === 0) return;
+        const totalPlays = subset.length;
+        const totalHours = subset.reduce((s, r) => s + r.durationHours, 0);
+        const artist = subset[0].primaryArtist;
+        const firstPlay = subset[0].dateStr;
+        const lastPlay = subset[subset.length - 1].dateStr;
+
+        container.innerHTML = `
+          <div style="border-bottom: 1px solid var(--color-hairline); padding-bottom: 16px; margin-bottom: 20px;">
+            <div style="font-size: 11px; text-transform: uppercase; color: var(--color-primary); letter-spacing: 1.1px; font-weight: 700;">TRACK DEEP-DIVE TELEMETRY</div>
+            <h2 style="font-size: 28px; font-weight: 500; color: #ffffff; margin-top: 4px;">${escapeHtml(targetName)}</h2>
+            <div style="color: var(--color-body); font-size: 14px; margin-top: 2px;">Artist: <strong style="color: #ffffff;">${escapeHtml(artist)}</strong></div>
+          </div>
+          <div class="spec-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 20px;">
+            <div class="spec-card">
+              <div class="spec-card-label">Total Plays</div>
+              <div class="spec-card-value">${totalPlays.toLocaleString()}</div>
+            </div>
+            <div class="spec-card">
+              <div class="spec-card-label">Listening Time</div>
+              <div class="spec-card-value" style="color: var(--color-primary);">${totalHours.toFixed(2)}h</div>
+            </div>
+            <div class="spec-card">
+              <div class="spec-card-label">First Play</div>
+              <div class="spec-card-value" style="font-size: 18px; margin-top: 6px;">${firstPlay}</div>
+            </div>
+            <div class="spec-card">
+              <div class="spec-card-label">Last Play</div>
+              <div class="spec-card-value" style="font-size: 18px; margin-top: 6px;">${lastPlay}</div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // =========================================================================
+    // 7. RENDER WRAPPED CARD
+    // =========================================================================
+    function renderWrappedCard() {
+      if (cleanRecords.length === 0) return;
+      const selectedYear = document.getElementById('wrapped-year-select').value;
+      const subset = selectedYear === 'all' ? cleanRecords : cleanRecords.filter(r => r.year === parseInt(selectedYear, 10));
+      if (subset.length === 0) return;
+
+      const totalPlays = subset.length;
+      const totalHours = subset.reduce((s, r) => s + r.durationHours, 0).toFixed(1);
+      const uniqueArtists = new Set(subset.map(r => r.primaryArtist)).size;
+      const uniqueTracks = new Set(subset.map(r => r.trackId)).size;
+
+      // Top 5 Artists
+      const artMap = {};
+      subset.forEach(r => artMap[r.primaryArtist] = (artMap[r.primaryArtist] || 0) + 1);
+      const top5Art = Object.entries(artMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+      // Top 5 Tracks
+      const trkMap = {};
+      subset.forEach(r => {
+        if (!trkMap[r.trackId]) trkMap[r.trackId] = { title: r.title, artist: r.primaryArtist, plays: 0 };
+        trkMap[r.trackId].plays++;
+      });
+      const top5Trk = Object.values(trkMap).sort((a, b) => b.plays - a.plays).slice(0, 5);
+
+      const htmlCard = `
+        <div id="ferrari-wrapped-card" style="
+          max-width: 620px;
+          margin: 0 auto;
+          background: #181818;
+          border: 1px solid #303030;
+          padding: 32px;
+          color: #ffffff;
+          font-family: 'FerrariSans', 'Inter', -apple-system, sans-serif;
+        ">
+          <!-- Top Rosso Corsa Livery Accent -->
+          <div style="height: 3px; background: #da291c; margin: -32px -32px 24px -32px;"></div>
+
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; border-bottom: 1px solid #303030; padding-bottom: 20px;">
+            <div>
+              <span style="background: #303030; color: #ffffff; padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; letter-spacing: 1.1px; text-transform: uppercase;">
+                WRAPPED TELEMETRY
+              </span>
+              <h1 style="margin: 10px 0 0 0; font-size: 32px; font-weight: 500; letter-spacing: -0.5px; color: #ffffff; text-transform: uppercase;">
+                ${selectedYear} REWIND
+              </h1>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 11px; text-transform: uppercase; color: #969696; letter-spacing: 1.1px; font-weight: 600;">Listening Time</div>
+              <div style="font-size: 38px; font-weight: 700; color: #da291c; line-height: 1; margin-top: 4px; letter-spacing: -1.6px;">
+                ${totalHours} <span style="font-size: 14px; font-weight: 500; color: #ffffff; letter-spacing: 0;">HRS</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px;">
+            <div style="background: #202020; border: 1px solid #303030; padding: 16px;">
+              <div style="font-size: 11px; text-transform: uppercase; color: #969696; letter-spacing: 1.1px; font-weight: 600; margin-bottom: 6px;">Total Plays</div>
+              <div style="font-size: 26px; font-weight: 700; color: #ffffff; letter-spacing: -0.8px;">${totalPlays.toLocaleString()}</div>
+            </div>
+            <div style="background: #202020; border: 1px solid #303030; padding: 16px;">
+              <div style="font-size: 11px; text-transform: uppercase; color: #969696; letter-spacing: 1.1px; font-weight: 600; margin-bottom: 6px;">Artists</div>
+              <div style="font-size: 26px; font-weight: 700; color: #ffffff; letter-spacing: -0.8px;">${uniqueArtists.toLocaleString()}</div>
+            </div>
+            <div style="background: #202020; border: 1px solid #303030; padding: 16px;">
+              <div style="font-size: 11px; text-transform: uppercase; color: #969696; letter-spacing: 1.1px; font-weight: 600; margin-bottom: 6px;">Tracks</div>
+              <div style="font-size: 26px; font-weight: 700; color: #ffffff; letter-spacing: -0.8px;">${uniqueTracks.toLocaleString()}</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px;">
+            <div style="background: #1c1c1c; border: 1px solid #303030; padding: 18px;">
+              <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px; color: #ffffff; margin-bottom: 12px; border-bottom: 1px solid #303030; padding-bottom: 6px;">
+                TOP ARTISTS
+              </div>
+              <ul style="list-style: none; padding: 0; margin: 0;">
+                ${top5Art.map(([name, p], i) => `
+                  <li style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #303030;">
+                    <span><span style="color: #da291c; font-weight: 700; margin-right: 8px;">P${i+1}</span> ${escapeHtml(name)}</span>
+                    <span style="color: #969696; font-size: 12px; font-weight: 600;">${p}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+            <div style="background: #1c1c1c; border: 1px solid #303030; padding: 18px;">
+              <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px; color: #ffffff; margin-bottom: 12px; border-bottom: 1px solid #303030; padding-bottom: 6px;">
+                TOP TRACKS
+              </div>
+              <ul style="list-style: none; padding: 0; margin: 0;">
+                ${top5Trk.map((t, i) => `
+                  <li style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #303030;">
+                    <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;">
+                      <span style="color: #da291c; font-weight: 700; margin-right: 8px;">P${i+1}</span> ${escapeHtml(t.title)}
+                    </span>
+                    <span style="color: #ffffff; font-weight: 700;">${t.plays}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+          </div>
+
+          <div style="background: #202020; border: 1px solid #303030; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+            <div>
+              <span style="color: #969696; text-transform: uppercase; font-size: 11px; letter-spacing: 1.1px; font-weight: 600;">AUTHENTICATION:</span>
+              <span style="font-weight: 700; color: #ffffff; margin-left: 8px;">100% VERIFIED CLIENT-SIDE</span>
+            </div>
+            <div style="color: #da291c; font-weight: 700; font-size: 12px; letter-spacing: 1px; text-transform: uppercase;">
+              PRO REWIND
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('wrapped-card-container').innerHTML = htmlCard;
+
+      // Play Milestones
+      const targets = [1, 100, 500, 1000, 2500, 5000, 10000];
+      const mRows = [];
+      targets.forEach(m => {
+        if (m <= subset.length) {
+          const row = subset[m - 1];
+          mRows.push({
+            milestone: `#${m.toLocaleString()} Play`,
+            date: row.dateStr,
+            title: row.title,
+            artist: row.primaryArtist
+          });
+        }
+      });
+      const mTbody = document.querySelector('#table-milestones tbody');
+      mTbody.innerHTML = '';
+      mRows.forEach(m => {
+        mTbody.innerHTML += `
+          <tr>
+            <td class="p-rank" style="width: 100px;">${m.milestone}</td>
+            <td>${m.date}</td>
+            <td style="font-weight: 600;">${escapeHtml(m.title)}</td>
+            <td style="color: var(--color-body);">${escapeHtml(m.artist)}</td>
+          </tr>
+        `;
+      });
+
+      // Forgotten Gems (rediscovery)
+      const maxDate = new Date(cleanRecords[cleanRecords.length - 1].timestamp);
+      const cutoff = new Date(maxDate.getTime() - 365 * 86400000);
+      const pastPlays = {};
+      const recentPlayed = new Set();
+      cleanRecords.forEach(r => {
+        if (r.dateObj < cutoff) {
+          if (!pastPlays[r.trackId]) pastPlays[r.trackId] = { title: r.title, artist: r.primaryArtist, plays: 0, lastPlayed: r.dateStr };
+          pastPlays[r.trackId].plays++;
+          pastPlays[r.trackId].lastPlayed = r.dateStr;
+        } else {
+          recentPlayed.add(r.trackId);
+        }
+      });
+      const gems = Object.values(pastPlays)
+        .filter(p => p.plays >= 5 && !recentPlayed.has(p.title + ' - ' + p.artist))
+        .sort((a, b) => b.plays - a.plays)
+        .slice(0, 15);
+
+      const gemTbody = document.querySelector('#table-rediscovery tbody');
+      gemTbody.innerHTML = '';
+      gems.forEach((g, idx) => {
+        gemTbody.innerHTML += `
+          <tr>
+            <td class="p-rank">P${idx + 1}</td>
+            <td style="font-weight: 600;">${escapeHtml(g.title)}</td>
+            <td style="color: var(--color-body);">${escapeHtml(g.artist)}</td>
+            <td>${g.plays} plays</td>
+            <td>${g.lastPlayed}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // Download Wrapped Card HTML
+    document.getElementById('btn-download-wrapped-card').addEventListener('click', () => {
+      const cardEl = document.getElementById('ferrari-wrapped-card');
+      if (!cardEl) return;
+      const htmlDoc = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>YT Music Wrapped Telemetry</title>
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        </head>
+        <body style="background: #111111; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 24px;">
+          ${cardEl.outerHTML}
+        </body>
+        </html>
+      `;
+      const blob = new Blob([htmlDoc], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `YT_Music_Wrapped_${document.getElementById('wrapped-year-select').value}.html`;
+      a.click();
+    });
+
+    // Helper: Create or update Chart.js instance
+    function createOrUpdateChart(canvasId, config) {
+      if (activeCharts[canvasId]) {
+        activeCharts[canvasId].destroy();
+      }
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      activeCharts[canvasId] = new Chart(canvas, config);
+    }
+
+    // Helper: CSV Download
+    function downloadCsv(content, filename) {
+      const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+    }
+
+    // Helper: Escape HTML
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, s => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[s]));
+    }
+
+    // Auto-load sample data on launch for instantaneous sleek preview
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('btn-load-demo').click();
+    });
+  </script>
+</body>
 </html>

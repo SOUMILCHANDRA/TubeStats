@@ -12,17 +12,23 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 
-# Consistent Dark Theme Palette
+# Ferrari Design Tokens & Layout
 DARK_LAYOUT = dict(
     template="plotly_dark",
-    paper_bgcolor="rgba(14, 17, 23, 0.95)",
-    plot_bgcolor="rgba(22, 27, 34, 0.7)",
-    font=dict(family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif", color="#F0F6FC"),
+    paper_bgcolor="#181818",
+    plot_bgcolor="#181818",
+    font=dict(family="'FerrariSans', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", color="#ffffff"),
     margin=dict(l=40, r=40, t=50, b=40),
-    hoverlabel=dict(bgcolor="#1F242C", font_size=13, font_color="#FFFFFF"),
+    hoverlabel=dict(bgcolor="#303030", font_size=13, font_color="#ffffff", bordercolor="#da291c"),
 )
 
-PALETTE = ["#FF0055", "#00F0FF", "#8A2BE2", "#FFD700", "#00E676", "#FF7A00", "#38EF7D", "#11998E"]
+PALETTE = ["#da291c", "#ffffff", "#969696", "#d2d2d2", "#666666", "#b01e0a", "#4c98b9", "#f6e500"]
+FERRARI_RED = "#da291c"
+FERRARI_RED_ACTIVE = "#b01e0a"
+FERRARI_INK = "#ffffff"
+FERRARI_BODY = "#969696"
+FERRARI_HAIRLINE = "#303030"
+
 
 
 def plot_top_horizontal_bars(
@@ -50,13 +56,13 @@ def plot_top_horizontal_bars(
         orientation="h",
         title=title,
         color=color_col or x_col,
-        color_continuous_scale=color_scale,
+        color_continuous_scale=[[0, "#303030"], [0.5, "#8f1b13"], [1.0, "#da291c"]],
         text=x_col
     )
     fig.update_traces(
         textposition="outside",
         hovertemplate=f"<b>%{{y}}</b><br>{x_label}: %{{x:,.1f}}<extra></extra>",
-        marker=dict(line=dict(width=1, color="rgba(255,255,255,0.15)"))
+        marker=dict(line=dict(width=1, color=FERRARI_HAIRLINE))
     )
     fig.update_layout(
         **DARK_LAYOUT,
@@ -80,8 +86,8 @@ def plot_monthly_timeline(monthly_df: pd.DataFrame) -> go.Figure:
             x=monthly_df["month"],
             y=monthly_df["Plays"],
             name="Plays",
-            marker_color="#FF0055",
-            opacity=0.85,
+            marker_color=FERRARI_RED,
+            opacity=0.9,
             hovertemplate="<b>%{x}</b><br>Plays: %{y:,}<extra></extra>"
         )
     )
@@ -93,8 +99,8 @@ def plot_monthly_timeline(monthly_df: pd.DataFrame) -> go.Figure:
             name="Hours",
             yaxis="y2",
             mode="lines+markers",
-            line=dict(color="#00F0FF", width=3, shape="spline"),
-            marker=dict(size=8, color="#00F0FF"),
+            line=dict(color=FERRARI_INK, width=2.5, shape="spline"),
+            marker=dict(size=7, color=FERRARI_INK),
             hovertemplate="<b>%{x}</b><br>Listening Time: %{y:,.1f} hrs<extra></extra>"
         )
     )
@@ -102,8 +108,8 @@ def plot_monthly_timeline(monthly_df: pd.DataFrame) -> go.Figure:
     fig.update_layout(
         **DARK_LAYOUT,
         title="Monthly Listening Volume (Plays & Hours)",
-        xaxis=dict(title="Month", tickangle=-45),
-        yaxis=dict(title="Total Plays", showgrid=True, gridcolor="#21262D"),
+        xaxis=dict(title="Month", tickangle=-45, showgrid=True, gridcolor=FERRARI_HAIRLINE),
+        yaxis=dict(title="Total Plays", showgrid=True, gridcolor=FERRARI_HAIRLINE),
         yaxis2=dict(title="Listening Hours", overlaying="y", side="right", showgrid=False),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
         hovermode="x unified",
@@ -125,7 +131,7 @@ def plot_year_over_year(yearly_df: pd.DataFrame) -> go.Figure:
             x=yearly_df["year"].astype(str),
             y=yearly_df["Plays"],
             name="Total Plays",
-            marker_color="#8A2BE2",
+            marker_color=FERRARI_RED,
             hovertemplate="<b>Year %{x}</b><br>Plays: %{y:,}<extra></extra>"
         )
     )
@@ -136,8 +142,8 @@ def plot_year_over_year(yearly_df: pd.DataFrame) -> go.Figure:
             name="Total Hours",
             yaxis="y2",
             mode="lines+markers+text",
-            line=dict(color="#FFD700", width=3),
-            marker=dict(size=10),
+            line=dict(color=FERRARI_INK, width=2.5),
+            marker=dict(size=9, color=FERRARI_INK),
             text=[f"{h:.0f}h" for h in yearly_df["Hours"]],
             textposition="top center",
             hovertemplate="<b>Year %{x}</b><br>Hours: %{y:,.1f}h<extra></extra>"
@@ -146,8 +152,8 @@ def plot_year_over_year(yearly_df: pd.DataFrame) -> go.Figure:
     fig.update_layout(
         **DARK_LAYOUT,
         title="Year-Over-Year Comparison",
-        xaxis=dict(title="Year"),
-        yaxis=dict(title="Plays", showgrid=True, gridcolor="#21262D"),
+        xaxis=dict(title="Year", showgrid=True, gridcolor=FERRARI_HAIRLINE),
+        yaxis=dict(title="Plays", showgrid=True, gridcolor=FERRARI_HAIRLINE),
         yaxis2=dict(title="Listening Hours", overlaying="y", side="right", showgrid=False),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
         height=400,
@@ -157,7 +163,7 @@ def plot_year_over_year(yearly_df: pd.DataFrame) -> go.Figure:
 
 def plot_calendar_heatmap(daily_df: pd.DataFrame) -> go.Figure:
     """
-    GitHub-style calendar heatmap displaying daily listening volume.
+    Ferrari Telemetry calendar heatmap displaying daily listening volume.
     X-axis: Week of Year, Y-axis: Day of Week (Mon-Sun).
     """
     if daily_df.empty:
@@ -192,11 +198,11 @@ def plot_calendar_heatmap(daily_df: pd.DataFrame) -> go.Figure:
             x=col_labels,
             y=day_names,
             colorscale=[
-                [0.0, "#161B22"],
-                [0.2, "#0E4429"],
-                [0.4, "#006D32"],
-                [0.7, "#26A641"],
-                [1.0, "#39D353"]
+                [0.0, "#1f1f1f"],
+                [0.2, "#38120f"],
+                [0.5, "#6b1711"],
+                [0.8, "#b01e0a"],
+                [1.0, "#da291c"]
             ],
             hoverongaps=False,
             hovertemplate="Week: %{x}<br>Day: %{y}<br>Plays: %{z:,}<extra></extra>"
@@ -204,7 +210,7 @@ def plot_calendar_heatmap(daily_df: pd.DataFrame) -> go.Figure:
     )
     fig.update_layout(
         **DARK_LAYOUT,
-        title="Activity Calendar (Daily Plays Heatmap)",
+        title="Activity Calendar (Daily Telemetry Heatmap)",
         xaxis=dict(title="", tickangle=-45, showgrid=False),
         yaxis=dict(title="", autorange="reversed", showgrid=False),
         height=320,
@@ -225,10 +231,11 @@ def plot_hourly_breakdown(hourly_df: pd.DataFrame) -> go.Figure:
         y="Plays",
         title="Listening by Hour of Day (24-Hour Cycle)",
         color="Plays",
-        color_continuous_scale="Turbo"
+        color_continuous_scale=[[0, "#303030"], [0.5, "#8f1b13"], [1.0, "#da291c"]]
     )
     fig.update_traces(
-        hovertemplate="<b>%{x}</b><br>Plays: %{y:,}<extra></extra>"
+        hovertemplate="<b>%{x}</b><br>Plays: %{y:,}<extra></extra>",
+        marker=dict(line=dict(width=1, color=FERRARI_HAIRLINE))
     )
     fig.update_layout(
         **DARK_LAYOUT,
@@ -255,15 +262,21 @@ def plot_weekday_hour_heatmap(matrix_df: pd.DataFrame) -> go.Figure:
             z=matrix_df.values,
             x=hours_labels,
             y=days_labels,
-            colorscale="Inferno",
+            colorscale=[
+                [0.0, "#181818"],
+                [0.25, "#303030"],
+                [0.55, "#7a1710"],
+                [0.8, "#b01e0a"],
+                [1.0, "#da291c"]
+            ],
             hovertemplate="<b>%{y} at %{x}</b><br>Plays: %{z:,}<extra></extra>"
         )
     )
     fig.update_layout(
         **DARK_LAYOUT,
         title="Listening Intensity (Day of Week vs Hour)",
-        xaxis=dict(title="Hour of Day", tickangle=-45),
-        yaxis=dict(title="", autorange="reversed"),
+        xaxis=dict(title="Hour of Day", tickangle=-45, showgrid=False),
+        yaxis=dict(title="", autorange="reversed", showgrid=False),
         height=360,
     )
     return fig
@@ -281,8 +294,8 @@ def plot_time_bucket_donut(bucket_df: pd.DataFrame, listener_type: str) -> go.Fi
             go.Pie(
                 labels=bucket_df["Bucket"],
                 values=bucket_df["Plays"],
-                hole=0.55,
-                marker=dict(colors=["#FF7A00", "#FFD700", "#FF0055", "#8A2BE2"]),
+                hole=0.6,
+                marker=dict(colors=["#da291c", "#b01e0a", "#ffffff", "#666666"]),
                 hovertemplate="<b>%{label}</b><br>Plays: %{value:,} (%{percent})<extra></extra>",
                 textinfo="label+percent"
             )
@@ -293,12 +306,12 @@ def plot_time_bucket_donut(bucket_df: pd.DataFrame, listener_type: str) -> go.Fi
         title=f"Listener Persona: <b>{listener_type}</b>",
         annotations=[
             dict(
-                text="Time of Day",
+                text="TIME OF DAY",
                 x=0.5,
                 y=0.5,
-                font_size=15,
+                font_size=12,
                 showarrow=False,
-                font=dict(color="#8B949E")
+                font=dict(color="#969696", family="'FerrariSans', Inter, sans-serif")
             )
         ],
         height=380,
@@ -319,10 +332,10 @@ def plot_cumulative_growth(growth_df: pd.DataFrame) -> go.Figure:
         go.Scatter(
             x=growth_df["date"],
             y=growth_df["Cumulative_Tracks"],
-            name="Unique Tracks Discovered",
-            line=dict(color="#00F0FF", width=3),
+            name="Unique Tracks",
+            line=dict(color=FERRARI_INK, width=2.5),
             fill="tozeroy",
-            fillcolor="rgba(0, 240, 255, 0.1)",
+            fillcolor="rgba(255, 255, 255, 0.04)",
             hovertemplate="<b>%{x}</b><br>Tracks: %{y:,}<extra></extra>"
         )
     )
@@ -330,16 +343,16 @@ def plot_cumulative_growth(growth_df: pd.DataFrame) -> go.Figure:
         go.Scatter(
             x=growth_df["date"],
             y=growth_df["Cumulative_Artists"],
-            name="Unique Artists Discovered",
-            line=dict(color="#FF0055", width=3),
+            name="Unique Artists",
+            line=dict(color=FERRARI_RED, width=2.5),
             hovertemplate="<b>%{x}</b><br>Artists: %{y:,}<extra></extra>"
         )
     )
     fig.update_layout(
         **DARK_LAYOUT,
         title="Cumulative Music Discovery Over Time",
-        xaxis=dict(title="Date"),
-        yaxis=dict(title="Cumulative Count", showgrid=True, gridcolor="#21262D"),
+        xaxis=dict(title="Date", showgrid=True, gridcolor=FERRARI_HAIRLINE),
+        yaxis=dict(title="Cumulative Count", showgrid=True, gridcolor=FERRARI_HAIRLINE),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
         height=420,
     )
@@ -358,8 +371,8 @@ def plot_repeat_tiers_donut(tiers_df: pd.DataFrame) -> go.Figure:
             go.Pie(
                 labels=tiers_df["Tier"],
                 values=tiers_df["Tracks"],
-                hole=0.5,
-                marker=dict(colors=["#3B82F6", "#10B981", "#F59E0B", "#EF4444"]),
+                hole=0.6,
+                marker=dict(colors=["#303030", "#666666", "#d2d2d2", "#da291c"]),
                 hovertemplate="<b>%{label}</b><br>Tracks: %{value:,} (%{percent})<extra></extra>",
                 textinfo="label+percent"
             )
@@ -388,10 +401,29 @@ def plot_concentration_curve(curve_df: pd.DataFrame, top10_share: float, gini: f
             y=curve_df["Cumulative_Share_%"],
             mode="lines+markers",
             name="Your Listening",
-            line=dict(color="#00E676", width=3),
+            line=dict(color=FERRARI_RED, width=2.5),
+            marker=dict(color=FERRARI_RED, size=6),
             hovertemplate="Top %{x} Artists: %{y:.1f}% of total plays<extra></extra>"
         )
     )
+    # Perfect equality reference line
+    fig.add_shape(
+        type="line",
+        x0=1,
+        y0=0,
+        x1=len(curve_df),
+        y1=100,
+        line=dict(color="#666666", dash="dash")
+    )
+    fig.update_layout(
+        **DARK_LAYOUT,
+        title=f"Artist Concentration Curve (Top 10 Share: <b>{top10_share}%</b> | Gini: <b>{gini}</b>)",
+        xaxis=dict(title="Top N Artists", showgrid=True, gridcolor=FERRARI_HAIRLINE),
+        yaxis=dict(title="Cumulative Listening Share (%)", range=[0, 105], showgrid=True, gridcolor=FERRARI_HAIRLINE),
+        height=380,
+    )
+    return fig
+
     # Perfect equality reference line
     fig.add_shape(
         type="line",
@@ -475,98 +507,109 @@ def plot_bar_chart_race_monthly(df: pd.DataFrame, top_k: int = 8) -> go.Figure:
 
 def render_wrapped_card_html(card_data: Dict[str, Any]) -> str:
     """
-    Generates a high-resolution, responsive glassmorphism Wrapped card in HTML/CSS.
-    Can be viewed inline or printed/saved.
+    Generates a high-precision, editorial Ferrari-aesthetic Wrapped card in HTML/CSS.
+    Uses near-black canvas, Rosso Corsa accents, sharp 0px corners, and telemetry typography.
     """
     if not card_data or not card_data.get("total_plays"):
-        return "<div style='color: white; padding: 20px;'>No data available for Wrapped card.</div>"
+        return "<div style='color: #ffffff; background: #181818; padding: 24px; border: 1px solid #303030; font-family: sans-serif;'>No telemetry data available for Wrapped card.</div>"
 
     artists_html = "".join([
-        f"<li style='display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.08);'>"
-        f"<span style='font-weight: 600;'>{i+1}. {a['name']}</span>"
-        f"<span style='color: #00F0FF; font-weight: bold;'>{a['plays']:,} plays</span></li>"
+        f"<li style='display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #303030;'>"
+        f"<span><span style='color: #da291c; font-weight: 700; font-size: 14px; margin-right: 8px;'>P{i+1}</span>"
+        f"<span style='color: #ffffff; font-weight: 500; font-size: 14px;'>{a['name']}</span></span>"
+        f"<span style='color: #969696; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;'>{a['plays']:,} plays</span></li>"
         for i, a in enumerate(card_data.get("top_artists", []))
     ])
 
     tracks_html = "".join([
-        f"<li style='display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.08);'>"
-        f"<span style='font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px;'>"
-        f"{i+1}. {t['title']} <span style='font-size: 11px; color: #8B949E;'>({t['artist']})</span></span>"
-        f"<span style='color: #FF0055; font-weight: bold;'>{t['plays']:,}</span></li>"
+        f"<li style='display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #303030;'>"
+        f"<span style='overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px;'>"
+        f"<span style='color: #da291c; font-weight: 700; font-size: 14px; margin-right: 8px;'>P{i+1}</span>"
+        f"<span style='color: #ffffff; font-weight: 500; font-size: 14px;'>{t['title']}</span> "
+        f"<span style='font-size: 11px; color: #666666;'>{t['artist']}</span></span>"
+        f"<span style='color: #ffffff; font-weight: 700; font-size: 13px;'>{t['plays']:,}</span></li>"
         for i, t in enumerate(card_data.get("top_tracks", []))
     ])
 
     busiest = card_data.get("busiest_day", {})
-    busiest_str = f"{busiest.get('date', 'N/A')} ({busiest.get('plays', 0)} plays, {busiest.get('hours', 0)} hrs)"
+    busiest_str = f"{busiest.get('date', 'N/A')} ({busiest.get('plays', 0)} plays • {busiest.get('hours', 0)} hrs)"
 
     html = f"""
     <div id="wrapped-card" style="
-        max-width: 580px;
-        margin: 20px auto;
-        background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-        border: 2px solid rgba(255, 255, 255, 0.15);
-        border-radius: 24px;
+        max-width: 620px;
+        margin: 16px auto;
+        background: #181818;
+        border: 1px solid #303030;
+        border-radius: 0px;
         padding: 32px;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 0 20px rgba(255,0,85,0.1);
-        color: #FFFFFF;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        color: #ffffff;
+        font-family: 'FerrariSans', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        box-sizing: border-box;
     ">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <!-- Top Editorial Livery Band -->
+        <div style="height: 3px; background: #da291c; margin: -32px -32px 24px -32px;"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; border-bottom: 1px solid #303030; padding-bottom: 20px;">
             <div>
-                <span style="background: #FF0055; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; letter-spacing: 1px;">
-                    WRAPPED PRO
+                <span style="background: #303030; color: #ffffff; padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 600; letter-spacing: 1.1px; text-transform: uppercase;">
+                    WRAPPED TELEMETRY
                 </span>
-                <h1 style="margin: 8px 0 0 0; font-size: 28px; font-weight: 900; background: linear-gradient(90deg, #FF0055, #00F0FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                    {card_data['year']} Rewind
+                <h1 style="margin: 10px 0 0 0; font-size: 32px; font-weight: 500; letter-spacing: -0.5px; color: #ffffff; text-transform: uppercase;">
+                    {card_data['year']} REWIND
                 </h1>
             </div>
             <div style="text-align: right;">
-                <div style="font-size: 11px; text-transform: uppercase; color: #8B949E; letter-spacing: 1px;">Listening Time</div>
-                <div style="font-size: 24px; font-weight: 900; color: #FFD700;">{card_data['total_hours']:,.1f} <span style="font-size: 14px;">Hours</span></div>
-            </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;">
-            <div style="background: rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; text-align: center;">
-                <div style="font-size: 11px; color: #8B949E;">Total Plays</div>
-                <div style="font-size: 20px; font-weight: bold; color: #00F0FF;">{card_data['total_plays']:,}</div>
-            </div>
-            <div style="background: rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; text-align: center;">
-                <div style="font-size: 11px; color: #8B949E;">Artists</div>
-                <div style="font-size: 20px; font-weight: bold; color: #39D353;">{card_data['unique_artists']:,}</div>
-            </div>
-            <div style="background: rgba(255,255,255,0.06); padding: 12px; border-radius: 14px; text-align: center;">
-                <div style="font-size: 11px; color: #8B949E;">Tracks</div>
-                <div style="font-size: 20px; font-weight: bold; color: #FF7A00;">{card_data['unique_tracks']:,}</div>
-            </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
-            <div style="background: rgba(0,0,0,0.3); padding: 16px; border-radius: 16px;">
-                <div style="font-size: 13px; font-weight: bold; text-transform: uppercase; color: #00F0FF; margin-bottom: 10px;">
-                    Top 5 Artists
+                <div style="font-size: 11px; text-transform: uppercase; color: #969696; letter-spacing: 1.1px; font-weight: 600;">Listening Time</div>
+                <div style="font-size: 38px; font-weight: 700; color: #da291c; line-height: 1; margin-top: 4px; letter-spacing: -1.6px;">
+                    {card_data['total_hours']:,.1f} <span style="font-size: 14px; font-weight: 500; color: #ffffff; letter-spacing: 0;">HRS</span>
                 </div>
-                <ul style="list-style: none; padding: 0; margin: 0; font-size: 13px;">
+            </div>
+        </div>
+
+        <!-- Telemetry Spec Cells Grid -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px;">
+            <div style="background: #202020; border: 1px solid #303030; padding: 16px; border-radius: 0px;">
+                <div style="font-size: 11px; text-transform: uppercase; color: #969696; letter-spacing: 1.1px; font-weight: 600; margin-bottom: 6px;">Total Plays</div>
+                <div style="font-size: 26px; font-weight: 700; color: #ffffff; letter-spacing: -0.8px;">{card_data['total_plays']:,}</div>
+            </div>
+            <div style="background: #202020; border: 1px solid #303030; padding: 16px; border-radius: 0px;">
+                <div style="font-size: 11px; text-transform: uppercase; color: #969696; letter-spacing: 1.1px; font-weight: 600; margin-bottom: 6px;">Artists</div>
+                <div style="font-size: 26px; font-weight: 700; color: #ffffff; letter-spacing: -0.8px;">{card_data['unique_artists']:,}</div>
+            </div>
+            <div style="background: #202020; border: 1px solid #303030; padding: 16px; border-radius: 0px;">
+                <div style="font-size: 11px; text-transform: uppercase; color: #969696; letter-spacing: 1.1px; font-weight: 600; margin-bottom: 6px;">Tracks</div>
+                <div style="font-size: 26px; font-weight: 700; color: #ffffff; letter-spacing: -0.8px;">{card_data['unique_tracks']:,}</div>
+            </div>
+        </div>
+
+        <!-- Top Artists & Songs Editorial Columns -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px;">
+            <div style="background: #1c1c1c; border: 1px solid #303030; padding: 18px; border-radius: 0px;">
+                <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px; color: #ffffff; margin-bottom: 12px; border-bottom: 1px solid #303030; padding-bottom: 6px;">
+                    TOP ARTISTS
+                </div>
+                <ul style="list-style: none; padding: 0; margin: 0;">
                     {artists_html}
                 </ul>
             </div>
-            <div style="background: rgba(0,0,0,0.3); padding: 16px; border-radius: 16px;">
-                <div style="font-size: 13px; font-weight: bold; text-transform: uppercase; color: #FF0055; margin-bottom: 10px;">
-                    Top 5 Songs
+            <div style="background: #1c1c1c; border: 1px solid #303030; padding: 18px; border-radius: 0px;">
+                <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px; color: #ffffff; margin-bottom: 12px; border-bottom: 1px solid #303030; padding-bottom: 6px;">
+                    TOP TRACKS
                 </div>
-                <ul style="list-style: none; padding: 0; margin: 0; font-size: 13px;">
+                <ul style="list-style: none; padding: 0; margin: 0;">
                     {tracks_html}
                 </ul>
             </div>
         </div>
 
-        <div style="background: rgba(255, 255, 255, 0.05); padding: 14px 18px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+        <!-- Footer Archetype Callout -->
+        <div style="background: #202020; border: 1px solid #303030; padding: 14px 18px; border-radius: 0px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
             <div>
-                <span style="color: #8B949E;">Listener Persona:</span>
-                <span style="font-weight: 700; color: #FFD700; margin-left: 6px;">{card_data['listener_type']}</span>
+                <span style="color: #969696; text-transform: uppercase; font-size: 11px; letter-spacing: 1.1px; font-weight: 600;">Archetype:</span>
+                <span style="font-weight: 700; color: #ffffff; margin-left: 8px;">{card_data['listener_type']}</span>
             </div>
-            <div style="color: #8B949E; font-size: 12px;">
-                Peak Day: <span style="color: #FFFFFF; font-weight: 600;">{busiest_str}</span>
+            <div style="color: #969696; font-size: 12px;">
+                Peak Session: <span style="color: #ffffff; font-weight: 600;">{busiest_str}</span>
             </div>
         </div>
     </div>

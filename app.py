@@ -19,66 +19,170 @@ import parser
 
 # Page configuration
 st.set_page_config(
-    page_title="YT Music Wrapped Pro",
-    page_icon="🎵",
+    page_title="YT Music Wrapped Pro — Telemetry",
+    page_icon="🏎️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom Dark Theme CSS & Glassmorphism styling
+# Ferrari Luxury-Automotive Design System CSS
 st.markdown("""
 <style>
-    /* Base styling */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    /* Global canvas & typography */
     .stApp {
-        background-color: #0E1117;
-        color: #F0F6FC;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: #181818 !important;
+        color: #ffffff !important;
+        font-family: 'FerrariSans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    }
+
+    /* Top livery band */
+    header[data-testid="stHeader"] {
+        background: #181818 !important;
+        border-bottom: 1px solid #303030 !important;
     }
     
-    /* Metrics card container */
+    /* Sidebar */
+    section[data-testid="stSidebar"] {
+        background-color: #141414 !important;
+        border-right: 1px solid #303030 !important;
+    }
+    section[data-testid="stSidebar"] .stMarkdown h1,
+    section[data-testid="stSidebar"] .stMarkdown h2,
+    section[data-testid="stSidebar"] .stMarkdown h3 {
+        color: #ffffff !important;
+        font-weight: 500 !important;
+        letter-spacing: -0.36px !important;
+    }
+
+    /* Metric cards: Sharp 0px corners, #202020 elevated card, 1px #303030 hairline */
     div[data-testid="stMetric"] {
-        background: linear-gradient(135deg, rgba(22, 27, 34, 0.8) 0%, rgba(30, 36, 45, 0.6) 100%);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 12px;
-        padding: 14px 18px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+        background: #202020 !important;
+        border: 1px solid #303030 !important;
+        border-radius: 0px !important;
+        padding: 16px 20px !important;
+        box-shadow: none !important;
     }
-    
-    /* Highlight banners */
-    .quality-banner {
-        background: linear-gradient(90deg, #161b22, #1c2128);
-        border-left: 4px solid #00F0FF;
-        border-radius: 8px;
-        padding: 14px 18px;
-        margin-bottom: 20px;
+    div[data-testid="stMetric"] label[data-testid="stMetricLabel"] {
+        font-size: 11px !important;
+        font-weight: 600 !important;
+        letter-spacing: 1.1px !important;
+        text-transform: uppercase !important;
+        color: #969696 !important;
     }
-    
-    /* Tabs custom styling */
+    div[data-testid="stMetric"] div[data-testid="stMetricValue"] {
+        font-size: 32px !important;
+        font-weight: 700 !important;
+        letter-spacing: -1px !important;
+        color: #ffffff !important;
+        line-height: 1.1 !important;
+    }
+    div[data-testid="stMetricDelta"] {
+        font-size: 12px !important;
+        font-weight: 500 !important;
+    }
+
+    /* Buttons: Primary Rosso Corsa #da291c, sharp 0px corners, uppercase tracked text */
+    div.stButton > button,
+    div.stDownloadButton > button {
+        background-color: #da291c !important;
+        color: #ffffff !important;
+        border: 1px solid #da291c !important;
+        border-radius: 0px !important;
+        padding: 12px 28px !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        letter-spacing: 1.4px !important;
+        text-transform: uppercase !important;
+        box-shadow: none !important;
+        transition: background-color 0.15s ease !important;
+    }
+    div.stButton > button:hover,
+    div.stDownloadButton > button:hover {
+        background-color: #9d2211 !important;
+        border-color: #9d2211 !important;
+        color: #ffffff !important;
+    }
+    div.stButton > button:active,
+    div.stDownloadButton > button:active {
+        background-color: #b01e0a !important;
+        border-color: #b01e0a !important;
+    }
+
+    /* Tabs: Sharp corners, hairlines, Rosso Corsa active indicator */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        padding-bottom: 4px;
+        gap: 0px !important;
+        border-bottom: 1px solid #303030 !important;
+        background: transparent !important;
+        padding-bottom: 0px !important;
     }
     .stTabs [data-baseweb="tab"] {
-        padding: 8px 18px;
-        border-radius: 8px;
-        color: #8B949E;
-        background: transparent;
-        transition: all 0.2s ease-in-out;
+        padding: 12px 24px !important;
+        border-radius: 0px !important;
+        color: #969696 !important;
+        background: transparent !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.65px !important;
+        text-transform: uppercase !important;
+        border-bottom: 2px solid transparent !important;
+        transition: all 0.15s ease !important;
+    }
+    .stTabs [data-baseweb="tab"]:hover {
+        color: #ffffff !important;
     }
     .stTabs [aria-selected="true"] {
-        background-color: rgba(255, 0, 85, 0.15) !important;
-        color: #FF0055 !important;
-        font-weight: 700;
-        border: 1px solid rgba(255, 0, 85, 0.3) !important;
+        background-color: #202020 !important;
+        color: #ffffff !important;
+        font-weight: 700 !important;
+        border-bottom: 2px solid #da291c !important;
     }
-    
-    /* Table styling */
+
+    /* Form inputs: rounded.sm (4px), 1px #303030 hairline */
+    input, select, textarea, div[data-baseweb="select"] {
+        border-radius: 4px !important;
+        border: 1px solid #303030 !important;
+        background-color: #181818 !important;
+        color: #ffffff !important;
+    }
+
+    /* Expanders: Sharp 0px corners, hairline */
+    div[data-testid="stExpander"] {
+        background-color: #202020 !important;
+        border: 1px solid #303030 !important;
+        border-radius: 0px !important;
+    }
+
+    /* Tables */
+    div[data-testid="stDataFrame"] {
+        border: 1px solid #303030 !important;
+        border-radius: 0px !important;
+        background: #181818 !important;
+    }
     .dataframe {
         font-size: 13px !important;
+        background-color: #181818 !important;
+        color: #ffffff !important;
+    }
+
+    /* Alerts and banners */
+    div[data-testid="stAlert"] {
+        background-color: #202020 !important;
+        border: 1px solid #303030 !important;
+        border-left: 3px solid #da291c !important;
+        border-radius: 0px !important;
+        color: #ffffff !important;
+    }
+
+    /* Dividers */
+    hr {
+        border-color: #303030 !important;
+        margin: 28px 0 !important;
     }
 </style>
 """, unsafe_allow_html=True)
+
 
 
 # ============================================================================
@@ -121,12 +225,23 @@ def load_and_clean_data(
 # SIDEBAR CONTROLS
 # ============================================================================
 
-st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/6/6a/Youtube_Music_icon.svg", width=50)
-st.sidebar.title("YT Music Wrapped Pro")
-st.sidebar.caption("100% Local • Private • Interactive Analytics")
+st.sidebar.markdown("""
+<div style="margin-bottom: 16px;">
+    <span style="background: #da291c; color: #ffffff; font-size: 10px; font-weight: 700; padding: 3px 8px; letter-spacing: 1.4px; text-transform: uppercase;">
+        TELEMETRY PRO
+    </span>
+    <h2 style="font-size: 20px; font-weight: 700; letter-spacing: 0.5px; color: #ffffff; margin: 8px 0 2px 0; text-transform: uppercase;">
+        YT MUSIC WRAPPED
+    </h2>
+    <div style="font-size: 11px; color: #969696; text-transform: uppercase; letter-spacing: 1px;">
+        100% Local • Private • Sub-ms Engine
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # Demo file option
 use_demo = st.sidebar.checkbox("Load Demo Sample Data", value=False, help="Try the app with synthetic watch history data.")
+
 
 uploaded_files = st.sidebar.file_uploader(
     "Upload watch-history.json",
@@ -292,6 +407,21 @@ with st.expander("📊 Data Quality & Ingestion Summary", expanded=False):
     duration_label = "API Verified Durations" if clean_report.duration_method_used == "api_lookup" else f"Gap-based Estimate (Cap: {gap_cap}m, Default: {default_track}m)"
     col_sub3.info(f"⏱️ **Duration Engine**: {duration_label}")
 
+
+# Editorial Top Telemetry Hero Band
+st.markdown("""
+<div style="background: #202020; border: 1px solid #303030; border-left: 4px solid #da291c; padding: 24px 32px; margin-bottom: 24px;">
+    <div style="font-size: 11px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: #da291c; margin-bottom: 6px;">
+        HIGH-PERFORMANCE AUDIO TELEMETRY
+    </div>
+    <h1 style="font-size: 36px; font-weight: 500; letter-spacing: -0.36px; margin: 0 0 8px 0; color: #ffffff; text-transform: uppercase;">
+        YT MUSIC TELEMETRY PRO
+    </h1>
+    <p style="color: #969696; font-size: 14px; margin: 0; max-width: 800px;">
+        Luxury editorial intelligence for your personal listening history. 100% private, local processing with Scuderia telemetry precision.
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
 # ============================================================================
 # MAIN TABS INTERFACE
