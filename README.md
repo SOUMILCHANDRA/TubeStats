@@ -1,8 +1,38 @@
-# 🎵 YT Music Wrapped Pro
+# 🎵 YT Music Wrapped Pro (TubeStats)
 
-A privacy-first local web application built with **Python**, **Streamlit**, **pandas**, and **Plotly** that transforms your Google Takeout YouTube Music `watch-history.json` into an exhaustive, Spotify/YouTube Wrapped-style dashboard.
+A privacy-first local and cloud-ready web application built with **Python**, **Streamlit**, **pandas**, and **Plotly** that transforms your Google Takeout YouTube Music `watch-history.json` into an exhaustive, Spotify/YouTube Wrapped-style dashboard.
 
-Everything runs **100% locally on your machine**. No files are uploaded to external cloud servers, and no Google account login or authentication is required.
+Everything can run **100% locally on your machine** or in the browser via **WebAssembly**. No personal files are ever uploaded to external cloud servers, and no Google account login or authentication is required.
+
+---
+
+## 🌐 Deployment Options
+
+### 1. Vercel Deployment (Optimized via stlite WebAssembly)
+Vercel is built for static frontends and stateless serverless functions, whereas traditional Streamlit requires a persistent, stateful WebSocket process.
+This repository solves this via **stlite** (`index.html` + `vercel.json`). The entire Streamlit dashboard and Python analytics engine run **client-side directly inside the user's browser via WebAssembly (Pyodide)**!
+- **0 serverless execution timeouts** (runs directly in client browser)
+- **0 backend compute cost**
+- **100% private**: All data parsing and charts run locally in the visitor's browser memory.
+
+**How to deploy on Vercel:**
+1. Import `SOUMILCHANDRA/TubeStats` in your [Vercel Dashboard](https://vercel.com).
+2. Framework Preset: Leave as **Other** (the included `vercel.json` automatically sets the build command to empty and output directory to root).
+3. Click **Deploy**!
+
+### 2. Streamlit Community Cloud (Official Free Server Hosting)
+If you prefer official server-side execution:
+1. Go to [share.streamlit.io](https://share.streamlit.io/).
+2. Select repository: `SOUMILCHANDRA/TubeStats`
+3. Branch: `main`
+4. Main file path: `app.py`
+5. Click **Deploy**!
+
+### 3. Render / Railway / PaaS
+This repo includes a `Procfile` configured for container and PaaS web services:
+```bash
+streamlit run app.py --server.port=$PORT --server.address=0.0.0.0 --server.headless=true
+```
 
 ---
 
@@ -36,27 +66,26 @@ Everything runs **100% locally on your machine**. No files are uploaded to exter
 
 ---
 
-## 🚀 Quick Setup & Installation
+## 🚀 Quick Setup & Local Installation
 
 ### 1. Prerequisites
 - Python 3.11 or higher (Python 3.13 tested)
 
-### 2. Clone / Open Directory & Install Dependencies
+### 2. Clone Directory & Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
 ### 3. (Optional) Generate Demo Sample Data
-If you don't have your Google Takeout archive yet, generate a realistic synthetic history file in seconds:
 ```bash
 python generate_sample_data.py
 ```
 
-### 4. Launch the App
+### 4. Launch the Local App
 ```bash
 streamlit run app.py
 ```
-Open your browser to the local URL (typically `http://localhost:8501`).
+Open your browser to `http://localhost:8501`.
 
 ---
 
@@ -76,8 +105,6 @@ Open your browser to the local URL (typically `http://localhost:8501`).
 
 ## 🧪 Running the Unit Tests
 
-The test suite validates parser filtering, cleaning transformations, session detection, skip heuristics, and metrics calculations:
-
 ```bash
 pytest test_pipeline.py
 ```
@@ -88,6 +115,9 @@ pytest test_pipeline.py
 
 ```
 YT STATS/
+├── index.html                  # Stlite WebAssembly client-side runner for Vercel
+├── vercel.json                 # Vercel static deployment configuration
+├── Procfile                    # PaaS / Render / Railway entrypoint
 ├── parser.py                   # Ingestion, triage, Google Ads & non-music filtering
 ├── cleaner.py                  # Deduplication, timezone conversion, gap duration, sessions
 ├── metrics.py                  # Pure calculation functions (overview, streaks, discovery, wrapped)
@@ -96,7 +126,7 @@ YT STATS/
 ├── test_pipeline.py            # Pytest unit tests for all core algorithms
 ├── generate_sample_data.py     # Realistic synthetic watch-history generator
 ├── requirements.txt            # Python dependencies
-└── README.md                   # Documentation and Takeout instructions
+└── README.md                   # Documentation and deployment instructions
 ```
 
 ---
